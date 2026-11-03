@@ -40,16 +40,6 @@ everything in one download.
 
 1. Get the theme, either way:
 
-   - **A release archive**, the simplest: download `Lagoon.tar.gz` from the
-     [releases](https://github.com/elomkdn/lagoon-kde/releases), extract it and run the
-     installer in it. The theme is already built: it installs offline, with nothing else.
-
-     ```sh
-     tar -xzf Lagoon.tar.gz
-     cd Lagoon
-     ./install.sh
-     ```
-
    - **A clone of the repository**: the installer builds the theme first (about 30 s),
      with Python and librsvg, both there on CachyOS, and downloads the Teal icons. To
      update, `git pull` and run `./install.sh` again.
@@ -57,6 +47,16 @@ everything in one download.
      ```sh
      git clone https://github.com/elomkdn/lagoon-kde.git
      cd lagoon-kde
+     ./install.sh
+     ```
+
+   - **A release archive**: download `Lagoon.tar.gz` from the
+     [releases](https://github.com/elomkdn/lagoon-kde/releases), extract it and run the
+     installer in it. The theme is already built: it installs offline, with nothing else.
+
+     ```sh
+     tar -xzf Lagoon.tar.gz
+     cd Lagoon
      ./install.sh
      ```
 
