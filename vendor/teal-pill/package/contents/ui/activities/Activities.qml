@@ -6,7 +6,7 @@ import org.kde.notificationmanager as NotificationManager
 import "../code/catppuccin.js" as Catppuccin
 import "../code/sensors.js" as Sensors
 
-// What else the island shows, besides music: like the iPhone's Dynamic Island, a passing
+// What else the island shows, besides music: a passing
 // event (the charger, headphones, the power profile) takes the pill for a moment, and lasting
 // ones (transfers, a microphone, a camera, a shared screen, a snapshot) sit beside the music.
 // Each can be turned off. Volume and brightness are left to Plasma's own pop-ups.
@@ -28,7 +28,7 @@ QtObject {
     readonly property bool snapshot: Plasmoid.configuration.showSnapshot && startedFromSnapshot
     readonly property bool busy: jobs > 0 || dots.length > 0
 
-    // the lasting ones, each a colored dot: the iPhone's orange and green, in Mocha
+    // the lasting ones, each a colored dot in Mocha
     readonly property var dots: {
         const list = [];
         if (microphone) {

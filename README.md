@@ -100,8 +100,7 @@ Lagoon is in use, Plasma first goes back to Breeze Dark; your panels stay.
 ![Teal Pill: the pill in the top bar and its card](screenshots/teal-pill.png)
 
 [Teal Pill](https://github.com/elomkdn/teal-pill) comes with Lagoon, in the middle of the top
-bar: an island in the spirit of the iPhone's Dynamic Island, for every player that speaks
-MPRIS (Spotify, Elisa, Haruna, mpv, Firefox, Chromium, Brave…).
+bar: an island for every player that speaks MPRIS (Spotify, Elisa, Haruna, mpv, Firefox, Chromium, Brave…).
 
 - **The pill**: the cover and bars that dance to the music, in the cover's color; on hover,
   it widens to show the title. Middle click plays or pauses, the wheel sets the volume.

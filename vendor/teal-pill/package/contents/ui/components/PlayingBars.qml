@@ -1,6 +1,6 @@
 import QtQuick
 
-// Four bars, centered like the iPhone's, that dance while music plays: each one picks its next
+// Four centered bars that dance while music plays: each one picks its next
 // height and its own tempo at random, so the motion never loops; the middle ones reach higher.
 // When the music stops, they settle into small equal dots.
 Row {
