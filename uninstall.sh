@@ -81,7 +81,7 @@ remove_lagoon() {
       plasma/layout-templates/com.github.elomkdn.lagoon.dock \
       plasma/layout-templates/com.github.elomkdn.lagoon.topbar \
       plasma/plasmoids/com.github.elomkdn.tealpill icons/catppuccin-mocha-teal-cursors \
-      aurorae/themes/CatppuccinMocha-Classic icons/Teal icons/Teal-dark icons/Teal-Papirus \
+      aurorae/themes/CatppuccinMocha-Classic icons/Teal icons/Teal-Papirus \
       icons/hicolor/scalable/apps/lagoon-launcher.svg; do
     rm -rf "${DATA:?}/$part"
   done
@@ -118,7 +118,7 @@ in_use=false
 for setting in "kdeglobals KDE LookAndFeelPackage" "plasmarc Theme name" "kdeglobals General ColorScheme" \
     "kdeglobals Icons Theme"; do
   set -- $setting
-  case $(kreadconfig6 --file "$1" --group "$2" --key "$3" 2>/dev/null) in Lagoon|Teal|Teal-dark) in_use=true ;; esac
+  case $(kreadconfig6 --file "$1" --group "$2" --key "$3" 2>/dev/null) in Lagoon|Teal) in_use=true ;; esac
 done
 if $in_use; then step "Going back to Breeze Dark (your panels stay)" back_to_breeze; fi
 step "Removing Lagoon, Teal Pill and the Teal icons" remove_lagoon
