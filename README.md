@@ -21,8 +21,8 @@ everything in one download.
   [Teal Pill](#teal-pill), included. Its launcher is
   [App Grid](https://appgrid.xarbit.dev) (`plasma6-applets-appgrid` in the AUR) if it is
   installed when the layout is applied, Plasma's own otherwise.
-- **Wallpapers**: Catppuccin waves and the CachyOS logo; and *Glow*, a bowl of teal
-  light through fluted glass. Both in 7 resolutions.
+- **Wallpapers**: Catppuccin waves and the CachyOS logo; the same waves without the logo, for
+  the lock screen; and *Glow*, a bowl of teal light through fluted glass. All in 7 resolutions.
 - **Splash screen**: the wallpaper's logo, whose bubbles float up from the C while
   the session loads, then fades into the desktop.
 - **Window decoration**: Klassy with rounded corners, recommended, or Catppuccin Mocha

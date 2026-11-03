@@ -72,7 +72,7 @@ back_to_breeze() {
 remove_lagoon() {
   local part ini path dir
   for part in plasma/look-and-feel/Lagoon plasma/desktoptheme/Lagoon color-schemes/Lagoon.colors \
-      themes/$THEME themes/$THEME-KIO wallpapers/Lagoon wallpapers/Lagoon-Glow \
+      themes/$THEME themes/$THEME-KIO wallpapers/Lagoon wallpapers/Lagoon-Glow wallpapers/Lagoon-Waves \
       plasma/layout-templates/com.github.elomkdn.lagoon.dock \
       plasma/layout-templates/com.github.elomkdn.lagoon.topbar \
       plasma/plasmoids/com.github.elomkdn.tealpill icons/catppuccin-mocha-teal-cursors \
@@ -84,6 +84,13 @@ remove_lagoon() {
   # the local copies of .desktop files Teal made to name its icons
   # (grep fails when there are none, which must not stop the rest of the cleaning)
   { grep -l '^X-Teal-Icon=true' "$DATA"/applications/*.desktop 2>/dev/null || true; } | xargs -r rm -f
+  # the lock screen's wallpaper, if it is still ours
+  local lock=(--file kscreenlockerrc --group Greeter --group Wallpaper --group org.kde.image --group General)
+  case $(kreadconfig6 "${lock[@]}" --key Image 2>/dev/null) in
+    *wallpapers/Lagoon-Waves*)
+      kwriteconfig6 "${lock[@]}" --key Image --delete
+      kwriteconfig6 "${lock[@]}" --key PreviewImage --delete ;;
+  esac
   # the libadwaita line, Kvantum's choice, Firefox's dots
   [ -f "$CONFIG/gtk-4.0/gtk.css" ] && sed -i "\|/themes/$THEME/gtk-4.0/|d" "$CONFIG/gtk-4.0/gtk.css"
   local kv=$CONFIG/Kvantum/kvantum.kvconfig

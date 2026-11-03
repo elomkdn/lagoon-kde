@@ -96,6 +96,28 @@ cat > "$WP/metadata.json" <<EOF
 }
 EOF
 
+# --- Le même sans le logo, « Waves » : pour l'écran de verrouillage, qui le floute derrière
+# l'avatar et le mot de passe ---
+WAVES=$DATA/wallpapers/Lagoon-Waves
+rm -rf "$WAVES"
+mkdir -p "$WAVES/contents/images"
+for size in $SIZES; do
+  python3 -I "$HERE/wallpaper/make-wallpaper.py" "$HERE/wallpaper/cachyos-logo.svg" \
+    "$WAVES/contents/images/$size.png" "${size%x*}" "${size#*x}" --no-logo
+done
+python3 -I "$HERE/wallpaper/make-wallpaper.py" "$HERE/wallpaper/cachyos-logo.svg" \
+  "$WAVES/contents/screenshot.png" 400 250 --no-logo
+cat > "$WAVES/metadata.json" <<EOF
+{
+    "KPlugin": {
+        "Authors": [ { "Name": "Elom" } ],
+        "Id": "Lagoon-Waves",
+        "License": "GPL-3.0-or-later",
+        "Name": "Lagoon Waves"
+    }
+}
+EOF
+
 # --- Second fond d'écran, « Glow » : un arc de lumière teal à travers du verre cannelé ---
 GLOW=$DATA/wallpapers/Lagoon-Glow
 rm -rf "$GLOW"

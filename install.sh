@@ -129,6 +129,7 @@ PARTS=(
   themes/$THEME                                             # GTK theme
   wallpapers/Lagoon                                         # wallpaper
   wallpapers/Lagoon-Glow                                    # second wallpaper
+  wallpapers/Lagoon-Waves                                   # the lock screen's, without the logo
   plasma/layout-templates/com.github.elomkdn.lagoon.dock    # "Add panel" templates
   plasma/layout-templates/com.github.elomkdn.lagoon.topbar
   plasma/plasmoids/com.github.elomkdn.tealpill              # Teal Pill, the top bar's music island
@@ -329,7 +330,17 @@ if $in_plasma && [ "$apply" = ask ]; then
   fi
 fi
 
+set_lock_screen() {
+  # behind the avatar and the password, the logo would blur into a stain; a wallpaper the user
+  # chose for the lock screen stays
+  local lock=(--file kscreenlockerrc --group Greeter --group Wallpaper --group org.kde.image --group General)
+  [ -z "$(kreadconfig6 "${lock[@]}" --key Image 2>/dev/null)" ] || return 0
+  kwriteconfig6 "${lock[@]}" --key Image "file://$DATA/wallpapers/Lagoon-Waves"
+  kwriteconfig6 "${lock[@]}" --key PreviewImage "file://$DATA/wallpapers/Lagoon-Waves"
+}
+
 apply_lagoon() {
+  set_lock_screen
   if [ "$layout" = yes ]; then
     plasma-apply-lookandfeel -a Lagoon --resetLayout
   else
