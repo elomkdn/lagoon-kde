@@ -1,0 +1,172 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the teal-pill package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: teal-pill\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-03 08:35+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: package/contents/config/config.qml:6
+msgid "General"
+msgstr ""
+
+#: package/contents/ui/activities/Activities.qml:132
+msgid "Performance"
+msgstr ""
+
+#: package/contents/ui/activities/Activities.qml:133
+msgid "Balanced"
+msgstr ""
+
+#: package/contents/ui/activities/Activities.qml:134
+msgid "Power save"
+msgstr ""
+
+#: package/contents/ui/activities/Activities.qml:156
+msgid "Started from a snapshot"
+msgstr ""
+
+#: package/contents/ui/components/Lyrics.qml:152
+msgid "No lyrics for this song"
+msgstr ""
+
+#: package/contents/ui/components/Lyrics.qml:152
+msgid "Lyrics unavailable"
+msgstr ""
+
+#: package/contents/ui/components/Lyrics.qml:153
+msgid "lrclib.net is not answering. Close and open the lyrics to try again."
+msgstr ""
+
+#: package/contents/ui/config/General.qml:64
+msgid "Players:"
+msgstr ""
+
+#: package/contents/ui/config/General.qml:69
+msgid "The one playing"
+msgstr ""
+
+#: package/contents/ui/config/General.qml:75
+msgid "Only these:"
+msgstr ""
+
+#: package/contents/ui/config/General.qml:99
+msgid "%1 (not open)"
+msgstr ""
+
+#: package/contents/ui/config/General.qml:106
+msgid "Open a player to choose it here."
+msgstr ""
+
+#: package/contents/ui/config/General.qml:114
+msgid "Panel:"
+msgstr ""
+
+#: package/contents/ui/config/General.qml:115
+msgid "Show when nothing plays"
+msgstr ""
+
+#: package/contents/ui/config/General.qml:119
+msgid "Always show the title, not only on hover"
+msgstr ""
+
+#: package/contents/ui/config/General.qml:123
+msgid "Title width:"
+msgstr ""
+
+#: package/contents/ui/config/General.qml:127
+msgid "%1 px"
+msgstr ""
+
+#: package/contents/ui/config/General.qml:133
+msgid "Colors:"
+msgstr ""
+
+#: package/contents/ui/config/General.qml:134
+msgid "Take the accent from the cover"
+msgstr ""
+
+#: package/contents/ui/config/General.qml:138
+msgid "Lyrics:"
+msgstr ""
+
+#: package/contents/ui/config/General.qml:139
+msgid ""
+"From lrclib.net, a free database: the title and artist of the song you open "
+"them for are sent to it."
+msgstr ""
+
+#: package/contents/ui/config/General.qml:150
+msgid "In the island:"
+msgstr ""
+
+#: package/contents/ui/config/General.qml:151
+msgid "Charger plugged in or out"
+msgstr ""
+
+#: package/contents/ui/config/General.qml:155
+msgid "Copies and downloads in progress"
+msgstr ""
+
+#: package/contents/ui/config/General.qml:159
+msgid "A dot while a microphone records"
+msgstr ""
+
+#: package/contents/ui/config/General.qml:163
+msgid "A dot while a camera is in use"
+msgstr ""
+
+#: package/contents/ui/config/General.qml:167
+msgid "A dot while the screen is shared or recorded"
+msgstr ""
+
+#: package/contents/ui/config/General.qml:171
+msgid "Headphones connecting, with their battery"
+msgstr ""
+
+#: package/contents/ui/config/General.qml:175
+msgid "Power profile changing"
+msgstr ""
+
+#: package/contents/ui/config/General.qml:179
+msgid "A warning when started from a snapshot"
+msgstr ""
+
+#: package/contents/ui/IslandFull.qml:156 package/contents/ui/main.qml:33
+msgid "Nothing playing"
+msgstr ""
+
+#: package/contents/ui/IslandFull.qml:223
+msgid "Open %1 (right click: next player)"
+msgstr ""
+
+#: package/contents/ui/IslandFull.qml:223
+msgid "Open %1"
+msgstr ""
+
+#: package/contents/ui/IslandFull.qml:244
+msgid "Previous"
+msgstr ""
+
+#: package/contents/ui/IslandFull.qml:257
+msgid "Next"
+msgstr ""
+
+#: package/contents/ui/IslandFull.qml:269
+msgid "Hide the lyrics"
+msgstr ""
+
+#: package/contents/ui/IslandFull.qml:269
+msgid "Show the lyrics"
+msgstr ""

@@ -1,0 +1,16 @@
+{
+    "KPackageStructure": "Plasma/LayoutTemplate",
+    "KPlugin": {
+        "Authors": [ { "Name": "Elom" } ],
+        "Category": "",
+        "Description": "Top bar with launcher, global menu, clock and system tray (Lagoon)",
+        "EnabledByDefault": true,
+        "Id": "com.github.elomkdn.lagoon.topbar",
+        "License": "GPL-3.0-or-later",
+        "Name": "Lagoon Top Bar"
+    },
+    "X-Plasma-ContainmentCategories": [
+        "panel"
+    ],
+    "X-Plasma-Shell": "plasmashell"
+}

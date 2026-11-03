@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0 http://www.kde.org/standards/kcfg/1.0/kcfg.xsd">
+  <kcfgfile name=""/>
+  <group name="General">
+    <!-- comma-separated player names (Spotify, Elisa…); empty: the one playing -->
+    <entry name="players" type="String">
+      <default></default>
+    </entry>
+    <entry name="showWhenNoMedia" type="Bool">
+      <default>false</default>
+    </entry>
+    <!-- in the panel, the title stays shown instead of only on hover -->
+    <entry name="alwaysShowTitle" type="Bool">
+      <default>false</default>
+    </entry>
+    <!-- in the panel, the title's widest width, in pixels -->
+    <entry name="titleWidth" type="Int">
+      <default>220</default>
+    </entry>
+    <entry name="tintFromCover" type="Bool">
+      <default>true</default>
+    </entry>
+    <!-- the island's other activities -->
+    <entry name="showCharger" type="Bool">
+      <default>true</default>
+    </entry>
+    <entry name="showTransfers" type="Bool">
+      <default>true</default>
+    </entry>
+    <entry name="showMicrophone" type="Bool">
+      <default>true</default>
+    </entry>
+    <entry name="showBluetooth" type="Bool">
+      <default>true</default>
+    </entry>
+    <entry name="showPowerProfile" type="Bool">
+      <default>true</default>
+    </entry>
+    <entry name="showCamera" type="Bool">
+      <default>true</default>
+    </entry>
+    <entry name="showScreenShare" type="Bool">
+      <default>true</default>
+    </entry>
+    <entry name="showSnapshot" type="Bool">
+      <default>true</default>
+    </entry>
+  </group>
+</kcfg>

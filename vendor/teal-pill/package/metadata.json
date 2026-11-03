@@ -1,0 +1,23 @@
+{
+    "KPackageStructure": "Plasma/Applet",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "elomkpadonou@gmail.com",
+                "Name": "Elom"
+            }
+        ],
+        "Category": "Multimedia",
+        "Description": "A pill in the panel with what is playing, its cover and its colors, and what else is going on",
+        "Description[fr]": "Une pastille dans le panneau avec ce qui joue, sa pochette et ses couleurs, et ce qui se passe d’autre",
+        "Icon": "view-media-track",
+        "Id": "com.github.elomkdn.tealpill",
+        "License": "GPL-3.0-or-later",
+        "Name": "Teal Pill",
+        "Website": "https://github.com/elomkdn/teal-pill"
+    },
+    "X-Plasma-API-Minimum-Version": "6.0",
+    "X-Plasma-Provides": [
+        "org.kde.plasma.multimediacontrols"
+    ]
+}

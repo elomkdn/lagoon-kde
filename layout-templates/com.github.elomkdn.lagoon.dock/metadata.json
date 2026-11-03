@@ -1,0 +1,16 @@
+{
+    "KPackageStructure": "Plasma/LayoutTemplate",
+    "KPlugin": {
+        "Authors": [ { "Name": "Elom" } ],
+        "Category": "",
+        "Description": "Floating dock at the bottom, fitted to its icons (Lagoon)",
+        "EnabledByDefault": true,
+        "Id": "com.github.elomkdn.lagoon.dock",
+        "License": "GPL-3.0-or-later",
+        "Name": "Lagoon Dock"
+    },
+    "X-Plasma-ContainmentCategories": [
+        "panel"
+    ],
+    "X-Plasma-Shell": "plasmashell"
+}

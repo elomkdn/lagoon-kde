@@ -1,0 +1,133 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: fr\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+msgid "Nothing playing"
+msgstr "Rien en lecture"
+
+
+msgid "Previous"
+msgstr "Précédent"
+
+msgid "Next"
+msgstr "Suivant"
+
+
+
+
+
+msgid "Show the lyrics"
+msgstr "Afficher les paroles"
+
+msgid "Open %1"
+msgstr "Ouvrir %1"
+
+msgid "General"
+msgstr "Général"
+
+msgid "No lyrics for this song"
+msgstr "Pas de paroles pour ce morceau"
+
+msgid "Lyrics unavailable"
+msgstr "Paroles indisponibles"
+
+msgid "lrclib.net is not answering. Close and open the lyrics to try again."
+msgstr "lrclib.net ne répond pas. Fermez et rouvrez les paroles pour réessayer."
+
+msgid "Players:"
+msgstr "Lecteurs :"
+
+
+
+msgid "Panel:"
+msgstr "Panneau :"
+
+msgid "Show when nothing plays"
+msgstr "Afficher quand rien ne joue"
+
+msgid "Always show the title, not only on hover"
+msgstr "Toujours afficher le titre, pas seulement au survol"
+
+msgid "Title width:"
+msgstr "Largeur du titre :"
+
+msgid "%1 px"
+msgstr "%1 px"
+
+msgid "Colors:"
+msgstr "Couleurs :"
+
+msgid "Take the accent from the cover"
+msgstr "Prendre l’accent de la pochette"
+
+msgid "Lyrics:"
+msgstr "Paroles :"
+
+msgid "From lrclib.net, a free database: the title and artist of the song you open them for are sent to it."
+msgstr "Depuis lrclib.net, une base libre : le titre et l’artiste du morceau dont vous ouvrez les paroles lui sont envoyés."
+
+msgid "Open %1 (right click: next player)"
+msgstr "Ouvrir %1 (clic droit : lecteur suivant)"
+
+msgid "Hide the lyrics"
+msgstr "Masquer les paroles"
+
+
+
+
+
+msgid "In the island:"
+msgstr "Dans l’île :"
+
+
+
+msgid "Charger plugged in or out"
+msgstr "Chargeur branché ou débranché"
+
+msgid "Copies and downloads in progress"
+msgstr "Copies et téléchargements en cours"
+
+msgid "A dot while a microphone records"
+msgstr "Un point quand un micro enregistre"
+
+msgid "A dot while a camera is in use"
+msgstr "Un point quand une caméra est utilisée"
+
+msgid "A dot while the screen is shared or recorded"
+msgstr "Un point quand l’écran est partagé ou enregistré"
+
+msgid "Headphones connecting, with their battery"
+msgstr "Connexion d’un casque, avec sa batterie"
+
+msgid "Power profile changing"
+msgstr "Changement de profil d’alimentation"
+
+msgid "A warning when started from a snapshot"
+msgstr "Une alerte au démarrage sur un snapshot"
+
+msgid "Performance"
+msgstr "Performance"
+
+msgid "Balanced"
+msgstr "Équilibré"
+
+msgid "Power save"
+msgstr "Économie d’énergie"
+
+msgid "Started from a snapshot"
+msgstr "Démarré sur un snapshot"
+
+
+msgid "The one playing"
+msgstr "Celui qui joue"
+
+msgid "Only these:"
+msgstr "Seulement ceux-ci :"
+
+msgid "%1 (not open)"
+msgstr "%1 (fermé)"
+
+msgid "Open a player to choose it here."
+msgstr "Ouvrez un lecteur pour le choisir ici."

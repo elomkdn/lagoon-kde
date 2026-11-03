@@ -1,0 +1,7 @@
+dist/
+__pycache__/
+tools/svgradius
+tools/svgframe
+tools/qmlrecord
+tools/ksvgcolor
+tools/kvgallery
