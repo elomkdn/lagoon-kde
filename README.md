@@ -82,7 +82,7 @@ everything in one download.
 | `--klassy` | rounded windows with Klassy, see [Rounded windows](#rounded-windows) |
 | `--firefox` | Firefox's window buttons as the theme's red, yellow and green dots (restart Firefox) |
 | `--no-icons` | keeps your icon theme: Teal is neither installed nor selected |
-| `--apply` | applies Lagoon at the end without asking, keeping your panels |
+| `--apply` | applies Lagoon at the end without asking, keeping your panels and a wallpaper you chose |
 | `--apply-layout` | applies Lagoon with its top bar and dock, in place of your panels |
 | `--no-apply` | installs only, without asking |
 

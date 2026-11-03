@@ -339,12 +339,23 @@ set_lock_screen() {
   kwriteconfig6 "${lock[@]}" --key PreviewImage "file://$DATA/wallpapers/Lagoon-Waves"
 }
 
+set_wallpaper() {
+  # keeping the panels keeps the wallpaper too: Lagoon's takes the place of the system's (CachyOS
+  # sets its own), never of one the user chose
+  local image
+  while IFS= read -r image; do
+    case ${image#file://} in /usr/share/*) ;; *) return 0 ;; esac
+  done < <(sed -n 's/^Image=//p' "$CONFIG/plasma-org.kde.plasma.desktop-appletsrc" 2>/dev/null)
+  plasma-apply-wallpaperimage "$DATA/wallpapers/Lagoon" >/dev/null 2>&1 || true
+}
+
 apply_lagoon() {
   set_lock_screen
   if [ "$layout" = yes ]; then
     plasma-apply-lookandfeel -a Lagoon --resetLayout
   else
     plasma-apply-lookandfeel -a Lagoon
+    set_wallpaper
   fi
   # the global theme selects Teal and the square Catppuccin decoration: keep the user's choices
   if ! $icons && [ -n "$previous_icons" ]; then

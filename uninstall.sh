@@ -47,6 +47,11 @@ note() { # a line under the steps
 $interactive && printf '\n  \033[1mLagoon\033[0m, uninstalling\n\n'
 
 back_to_breeze() {
+  # Lagoon's wallpapers are about to go
+  if [ -n "${WAYLAND_DISPLAY:-}${DISPLAY:-}" ] && [ -d /usr/share/wallpapers/Next ] &&
+      grep -q '^Image=.*wallpapers/Lagoon' "$CONFIG/plasma-org.kde.plasma.desktop-appletsrc" 2>/dev/null; then
+    plasma-apply-wallpaperimage /usr/share/wallpapers/Next >/dev/null 2>&1 || true
+  fi
   # Plasma's own look, keeping the panels; without a session, the settings it would write
   if [ -n "${WAYLAND_DISPLAY:-}${DISPLAY:-}" ] && command -v plasma-apply-lookandfeel >/dev/null; then
     plasma-apply-lookandfeel -a org.kde.breezedark.desktop
