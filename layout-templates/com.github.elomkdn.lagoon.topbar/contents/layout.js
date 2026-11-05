@@ -9,6 +9,8 @@ panel.height = 34
 panel.lengthMode = "fill"
 panel.floating = false
 panel.floatingApplets = true
+// translucent even when a window touches it ("adaptive" would turn it opaque then)
+panel.opacity = "translucent"
 
 if (has("dev.xarbit.appgrid")) {
     var grid = panel.addWidget("dev.xarbit.appgrid")

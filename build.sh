@@ -34,23 +34,15 @@ cat > "$PLASMA/metadata.json" <<EOF
 }
 EOF
 
-# Pas de flou ni de contraste derrière panneaux et popups : la région de flou de KWin
-# est alignée sur les pixels et dessine un liseré « scié » sur les coins arrondis.
+# Panneaux, popups et infobulles translucides et floutés quand KWin floute (translucent/),
+# opaques sinon ; solid/ pour les panneaux réglés opaques et leurs popups
+python3 -I "$HERE/build-translucent.py" "$HERE/plasma-theme" "$PLASMA"
 cat > "$PLASMA/plasmarc" <<'EOF'
 [Wallpaper]
 defaultWallpaperTheme=Lagoon
 defaultFileSuffix=.png
 defaultWidth=1920
 defaultHeight=1080
-
-[BlurBehindEffect]
-enabled=false
-
-[ContrastEffect]
-enabled=false
-
-[AdaptiveTransparency]
-enabled=false
 EOF
 
 # --- Thème GTK : le style de libadwaita (adw-gtk3) aux couleurs de Catppuccin Mocha, accent teal ;

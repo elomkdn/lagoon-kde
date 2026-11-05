@@ -1,4 +1,4 @@
-// Lagoon dock: a floating, opaque dock at the bottom, fitted to its icons, that steps aside
+// Lagoon dock: a floating, translucent dock at the bottom, fitted to its icons, that steps aside
 // when a window covers it.
 var panel = new Panel
 panel.location = "bottom"
@@ -9,7 +9,7 @@ panel.alignment = "center"
 panel.lengthMode = "fit"
 panel.hiding = "dodgewindows"
 panel.floating = true
-panel.opacity = "opaque"
+panel.opacity = "translucent"
 
 var tasks = panel.addWidget("org.kde.plasma.icontasks")
 tasks.currentConfigGroup = ["General"]

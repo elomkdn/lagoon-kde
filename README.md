@@ -21,6 +21,10 @@ everything in one download.
   [Teal Pill](#teal-pill), included. Its launcher is
   [App Grid](https://appgrid.xarbit.dev) (`plasma6-applets-appgrid` in the AUR) if it is
   installed when the layout is applied, Plasma's own otherwise.
+- **Translucent panels and popups**: the top bar, the dock, popups and tooltips let the
+  blurred desktop show through, inside a thin opaque edge that keeps their rounded corners
+  smooth. They turn opaque when KWin's blur effect is off, or when a panel is set to
+  opaque.
 - **Wallpapers**: Catppuccin waves and the CachyOS logo; the same waves without the logo, for
   the lock screen; and *Glow*, a bowl of teal light through fluted glass. All in 7 resolutions.
 - **Splash screen**: the wallpaper's logo, whose bubbles float up from the C while
