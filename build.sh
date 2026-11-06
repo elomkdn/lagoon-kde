@@ -49,8 +49,8 @@ EOF
 # les applis libadwaita lisent la même palette (gtk-4.0/lagoon.css, voir install.sh) ---
 python3 -I "$HERE/build-gtk.py" "$HERE/vendor/adw-gtk3" "$DATA/themes" Lagoon
 # --- Style d'applications Kvantum (optionnel) : KvLibadwaita Dark (le style des applis GNOME)
-# aux couleurs et rayons du thème, opaque. Kvantum cherche aussi ses thèmes dans le dossier
-# des thèmes GTK.
+# aux couleurs et rayons du thème ; menus et infobulles translucides et floutés. Kvantum
+# cherche aussi ses thèmes dans le dossier des thèmes GTK.
 python3 -I "$HERE/build-kvantum.py" "$HERE/vendor/kvlibadwaita" \
   "$DATA/themes/Lagoon/Kvantum" Lagoon
 

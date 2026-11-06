@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Construit le thème Kvantum « Lagoon » à partir de KvLibadwaita Dark (GabePoel) :
-le style des applis GNOME (libadwaita) pour les applis Qt, opaque, aux couleurs Catppuccin
-Mocha avec l'accent teal et aux rayons du thème GTK (9 px).
+le style des applis GNOME (libadwaita) pour les applis Qt, aux couleurs Catppuccin Mocha avec
+l'accent teal et aux rayons du thème GTK (9 px).
 
 - les gris neutres de libadwaita passent sur les gris Mocha, rôle par rôle, avec la
   convention du jeu de couleurs Catppuccin et du thème GTK : le cadre (fond des fenêtres,
@@ -9,7 +9,11 @@ Mocha avec l'accent teal et aux rayons du thème GTK (9 px).
   au-dessus, les boutons en surface0 ; son bleu passe sur le teal ; les coches et les points
   posés sur l'accent deviennent sombres (crust). Les applis Qt Widgets ressemblent ainsi aux
   applis Kirigami, qui suivent le jeu de couleurs ;
-- menus et infobulles : la base Mocha, opaques, comme les popups de Plasma ;
+- menus et infobulles : la base Mocha à POPUP_ALPHA, floutée, comme les popups de Plasma ; les
+  fenêtres restent opaques (leur fond l'est), mais Kvantum ne floute les popups dès leur
+  ouverture qu'avec la translucidité des fenêtres (translucent_windows, blurring) : sans elle,
+  popup_blurring seul n'applique pas le flou, sous Wayland, et les menus laissent voir net ce
+  qu'il y a derrière ;
 - sélections des listes : teal et texte sombre ; un teal moyen pour les listes sans focus, à
   cause du panneau Emplacements de KIO (voir SELECTION) ;
 - poignée des curseurs : un disque plein en text, comme celles de GTK et de Plasma (l'anneau
@@ -41,6 +45,7 @@ def mix(a, b, t):
 
 
 POPUP = BASE                              # comme les popups de Plasma : la base Mocha
+POPUP_ALPHA = 0.68                        # et la même opacité (build-translucent.py)
 FIELD = mix(BASE, SURFACE0, 0.75)         # champs : un cran au-dessus de la fenêtre
 HOVER = mix(BASE, SURFACE0, 0.8)          # ligne survolée
 TEAL_HOVER = mix(TEAL, TEXT, 0.25)        # accent survolé, un peu plus clair
@@ -89,8 +94,8 @@ SCOPED = {
     r"^itemview-pressed": {"#616161": SELECTION_FOCUS},
     r"^slidercursor": {"#3584e4": TEXT, "#2c2c2c": TEXT},  # poignée pleine (anneau et centre)
 }
-# Surfaces rendues opaques (KvLibadwaita : infobulles noires à 80 %)
-OPAQUE = r"^tooltip-normal"
+# Fonds des menus et des infobulles, à POPUP_ALPHA (KvLibadwaita : infobulles noires à 80 %)
+POPUPS = r"^(menu-(normal|shadow)|tooltip-normal)"  # l'ombre des menus dessine le bord de leur fond
 
 GENERAL_COLORS = {
     "window.color": MANTLE, "base.color": BASE, "alt.base.color": MANTLE,  # comme le jeu de couleurs
@@ -104,6 +109,9 @@ GENERAL_COLORS = {
 }
 
 RADIUS = 9
+OPAQUE_APPS = ("kaffeine,kmplayer,subtitlecomposer,kdenlive,vlc,smplayer,smplayer2,avidemux,"
+               "avidemux2_qt4,avidemux3_qt4,avidemux3_qt5,kamoso,QtCreator,VirtualBox,VirtualBoxVM,"
+               "trojita,dragon,digikam,lyx")
 
 # Rayons. Kvantum dessine les coins à la taille du cadre, qui compte aussi dans la taille des
 # widgets. Avec frame.expansion et des pièces « expand-<élément> » dans le SVG, il les dessine
@@ -124,7 +132,14 @@ EXPAND = {  # élément du SVG : (sections du kvconfig, taille des coins)
 }
 SETTINGS = {
     "%General": {"author": "Elom, based on KvLibadwaita by GabePoel",
-                 "comment": "Lagoon: the libadwaita look in Catppuccin Mocha with a teal accent"},
+                 "comment": "Lagoon: the libadwaita look in Catppuccin Mocha with a teal accent",
+                 # menus et infobulles translucides et floutés (voir plus haut) ; les applis qui
+                 # dessinent de la vidéo ou de l'OpenGL gardent des fenêtres opaques (la liste de
+                 # KvMojave, le thème translucide de Kvantum)
+                 "translucent_windows": "true", "blurring": "true", "popup_blurring": "true",
+                 "reduce_window_opacity": "0", "reduce_menu_opacity": "0",
+                 "menu_blur_radius": str(RADIUS), "tooltip_blur_radius": str(RADIUS),
+                 "opaque": OPAQUE_APPS},
     "Menu": {f"frame.{side}": str(RADIUS) for side in ("top", "bottom", "left", "right")},
     # vue de Dolphin transparente : elle prendrait le fond des fenêtres (mantle) au lieu de base
     "Hacks": {"transparent_dolphin_view": "false"},
@@ -171,15 +186,15 @@ def build_svg(text):
     ids = {e.get("id"): e for e in root.iter() if e.get("id")}
     parents = {c: p for p in root.iter() for c in p}
 
-    # 1. rôles propres à certains éléments, puis infobulles opaques
+    # 1. rôles propres à certains éléments, puis fonds des menus et des infobulles
     for eid, e in ids.items():
         for pattern, mapping in SCOPED.items():
             if re.match(pattern, eid):
                 recolor_attrs(e, mapping)
-        if re.match(OPAQUE, eid):
+        if re.match(POPUPS, eid):
             for x in e.iter():
                 if POPUP in (x.get("style") or ""):
-                    set_style(x, fill_opacity="1", opacity="1")
+                    set_style(x, fill_opacity=f"{POPUP_ALPHA:g}", opacity="1")
 
     # 2. sélection inactive : copie de la sélection, plus sombre
     for eid, e in list(ids.items()):

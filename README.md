@@ -22,9 +22,8 @@ everything in one download.
   [App Grid](https://appgrid.xarbit.dev) (`plasma6-applets-appgrid` in the AUR) if it is
   installed when the layout is applied, Plasma's own otherwise.
 - **Translucent panels and popups**: the top bar, the dock, popups and tooltips let the
-  blurred desktop show through, inside a thin opaque edge that keeps their rounded corners
-  smooth. They turn opaque when KWin's blur effect is off, or when a panel is set to
-  opaque.
+  blurred desktop show through, with smooth rounded corners and no outline. They turn
+  opaque when KWin's blur effect is off, or when a panel is set to opaque.
 - **Wallpapers**: Catppuccin waves and the CachyOS logo; the same waves without the logo, for
   the lock screen; and *Glow*, a bowl of teal light through fluted glass. All in 7 resolutions.
 - **Splash screen**: the wallpaper's logo, whose bubbles float up from the C while
@@ -145,11 +144,12 @@ Catppuccin decoration. Your previous `klassyrc` is kept as `klassyrc.bak`.
 The theme's [Kvantum](https://github.com/tsujan/Kvantum) application style gives Qt apps
 the look of GNOME apps, like the GTK theme: the global theme selects Kvantum, and
 `install.sh` selects its Lagoon theme. It is based on
-[KvLibadwaita](https://github.com/GabePoel/KvLibadwaita) Dark: opaque, in Catppuccin Mocha
+[KvLibadwaita](https://github.com/GabePoel/KvLibadwaita) Dark, in Catppuccin Mocha
 with the teal accent, with the GTK theme's radii (9 px buttons, text fields, menus, list
 and menu rows, tooltips; round toolbar buttons) at KvLibadwaita's density. Its tones
 follow the color scheme, like Kirigami and GTK apps: window backgrounds, menu bars and
-toolbars in mantle, views in base. Menus and tooltips are in Mocha base, like Plasma's popups.
+toolbars in mantle, views in base. Menus and tooltips are translucent and blurred in Mocha
+base, like Plasma's popups; windows stay opaque.
 Selections are teal with dark text, as in GTK and Kirigami apps, softer in inactive
 windows.
 
