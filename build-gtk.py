@@ -82,6 +82,13 @@ SELECTION_BACKDROP = mix(TEAL, BASE, 0.4)  # fenêtre inactive : le teal adouci 
 SUGGESTED = mix(SURFACE0, TEAL, 0.25)
 # boutons de fenêtre, comme la décoration Catppuccin ; inactifs en surface0, glyphe en base
 WINDOW_BUTTONS = {"close": RED, "minimize": YELLOW, "maximize": GREEN}
+# Pastilles de Klassy mesurées avec extras/klassy/klassyrc et Inter 12 : Klassy calcule leur taille
+# d'après la police de la barre de titre, à refaire si elle change. Écarts propres à GTK : 6 px
+# entre les boutons de GTK 3 (espacement de la headerbar) ; 4 px de marge intérieure en GTK 4.
+WINDOW_BUTTON_SIZE = 17
+WINDOW_BUTTON_PITCH = 29
+GTK3_BUTTON_MARGIN = (WINDOW_BUTTON_PITCH - WINDOW_BUTTON_SIZE - 6) // 2
+GTK4_BUTTON_PADDING = 4
 
 # Sélecteurs de sélection à laisser tels quels : menus (ils gardent leur surlignage), OSD,
 # onglets, boutons, barres de progression, glisser-déposer, champs en erreur, applis particulières
@@ -252,7 +259,8 @@ def gtk3_css(adw):
     # button:not(…):not(…) » : les mêmes contextes, et une classe de plus, pour passer devant
     contexts = (".titlebar button.titlebutton{}:not(.appmenu)", "headerbar button.titlebutton{}:not(.appmenu)")
     out.append(rule([c.format(f".{b}") for b in WINDOW_BUTTONS for c in contexts],
-                    "min-width: 18px", "min-height: 18px", "margin: 0 5px", "color: transparent"))
+                    f"min-width: {WINDOW_BUTTON_SIZE}px", f"min-height: {WINDOW_BUTTON_SIZE}px",
+                    f"margin: 0 {GTK3_BUTTON_MARGIN}px", "color: transparent"))
     for button, color in WINDOW_BUTTONS.items():
         out.append(rule([c.format(f".{button}") for c in contexts], f"background-color: {color}"))
     out.append(rule([c.format(":hover") for c in contexts], f"color: {BASE}"))
@@ -284,9 +292,12 @@ def gtk4_css(adw):
     out.append(rule(["tooltip.background"], f"background-color: {BASE}", f"color: {TEXT}",
                     f"border-color: {SURFACE0}"))
     out.append("\n/* window buttons: red, yellow and green dots like the Catppuccin decoration, glyph on hover */\n")
-    out.append(rule(["windowcontrols > button"], "min-width: 18px", "padding: 4px"))
+    out.append(rule(["windowcontrols"],
+                    f"border-spacing: {WINDOW_BUTTON_PITCH - WINDOW_BUTTON_SIZE - 2 * GTK4_BUTTON_PADDING}px"))
+    out.append(rule(["windowcontrols > button"], f"min-width: {WINDOW_BUTTON_SIZE}px",
+                    f"padding: {GTK4_BUTTON_PADDING}px"))
     out.append(rule(["windowcontrols > button > image", "headerbar.default-decoration windowcontrols > button > image"],
-                    "-gtk-icon-size: 14px", "padding: 2px", "box-shadow: none", "color: transparent"))
+                    f"-gtk-icon-size: {WINDOW_BUTTON_SIZE - 4}px", "padding: 2px", "box-shadow: none", "color: transparent"))
     for button, color in WINDOW_BUTTONS.items():
         out.append(rule([f"windowcontrols > button.{button} > image"], f"background-color: {color}"))
     out.append(rule(["windowcontrols > button:hover > image"], f"color: {BASE}"))
