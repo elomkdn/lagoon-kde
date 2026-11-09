@@ -61,6 +61,8 @@ FOCUS_RING = mix(BASE, TEAL, 0.5)         # anneau de focus, comme l'accent à 5
 SELECTION = "#2e8a7d"
 SELECTION_FOCUS = mix(TEAL, SELECTION, 0.5)
 SELECTION_INACTIVE = mix(TEAL, BASE, 0.4)
+INACTIVE_ACCENT = mix(OVERLAY1, TEAL, 0.25)  # l'accent éteint des fenêtres inactives
+FOCUS_FRAMES = ("button", "combo", "tab")   # les contrôles entourés d'un anneau de focus
 DEFAULT_TINT = 0.25                         # bouton par défaut : voile teal
 
 # Couleurs de KvLibadwaita Dark -> Mocha, par rôle (voir dev/color-assignment.json de KvLibadwaita)
@@ -144,13 +146,19 @@ SETTINGS = {
                  "menu_blur_radius": str(RADIUS), "tooltip_blur_radius": str(RADIUS),
                  "opaque": OPAQUE_APPS,
                  # chaque bouton d'outils garde ses quatre coins, même collé à un voisin
-                 "group_toolbar_buttons": "false", "toolbar_item_spacing": "2"},
+                 "group_toolbar_buttons": "false", "toolbar_item_spacing": "2",
+                 "combo_focus_rect": "true"},
     "Menu": {f"frame.{side}": str(RADIUS) for side in ("top", "bottom", "left", "right")},
     # vue de Dolphin transparente : elle prendrait le fond des fenêtres (mantle) au lieu de base
     "Hacks": {"transparent_dolphin_view": "false"},
     "ItemView": {"text.press.color": CRUST, "text.toggle.color": CRUST, "text.toggle.inactive.color": CRUST},
     # pas de rectangle pointillé de focus en plus : l'élément sélectionné se voit déjà à son fond
     "Focus": {"frame": "false"},
+    # à la place, un anneau arrondi autour du contrôle qui a le focus, comme celui des champs ;
+    # Kvantum ne distingue pas le clavier de la souris : il reste aussi après un clic
+    "PanelButtonCommand": {"focusFrame": "true"},
+    "ComboBox": {"focusFrame": "true"},
+    "Tab": {"focusFrame": "true"},
 }
 for sections, corner in EXPAND.values():
     for section in sections:
@@ -243,6 +251,31 @@ def build_svg(text):
             if m.group(1) in ("lineedit", "combo") and m.group(2) == "focused" and m.group(5):
                 thin_ring(copy_, m.group(5), 6 / EXPAND[m.group(1)][1])
             parents[e].append(copy_)
+
+    # anneau de focus : les pièces de celui des champs, sous le nom que Kvantum cherche
+    ids = {e.get("id"): e for e in root.iter() if e.get("id")}
+    parents = {c: p for p in root.iter() for c in p}
+    for ring in ("lineedit-focused", "expand-lineedit-focused"):
+        for eid, e in list(ids.items()):
+            m = re.match(rf"^{ring}(-(?:top|bottom|left|right|topleft|topright|bottomleft|bottomright))$", eid)
+            if m:
+                for target in FOCUS_FRAMES:
+                    new = ring.replace("lineedit-focused", f"{target}-focus")
+                    frame = renamed(e, new + m.group(1), prefix=(ring, new))
+                    for x in frame.iter():  # le trait seul : le fond des champs resterait sur le bouton
+                        if (x.tag.endswith(("rect", "path")) and "ColorScheme-Highlight" not in (x.get("class") or "")
+                                and "opacity:0.15" not in (x.get("style") or "")):
+                            set_style(x, opacity="0")
+                    parents[e].append(frame)
+
+    # fenêtre inactive : les accents s'éteignent, l'interface recule
+    grey = {"#3584e4": INACTIVE_ACCENT, "#4990e7": INACTIVE_ACCENT, TEAL: INACTIVE_ACCENT}
+    for eid, e in list(ids.items()):
+        m = re.match(rf"^((?:checkbox|radio)-(?:checked|tristate)-(?:normal|focused)|progress-pattern-normal"
+                     rf"|slider-toggled|button-default){PARTS}$", eid)
+        if m and not eid.endswith("-inactive"):
+            base, part = m.group(1), m.group(2) or ""
+            parents[e].append(renamed(e, f"{base}-inactive{part}", grey, (base, f"{base}-inactive")))
 
     # 4. le reste, par la table générale
     out = ET.tostring(root, encoding="unicode")

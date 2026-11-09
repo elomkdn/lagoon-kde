@@ -2,7 +2,6 @@
 // une ligne par contrôle ; repos, survol, appui, focus, fenêtre inactive, désactivé. Les états
 // sont forcés dans les options du style, avec animate_states à false pour voir leur état final ;
 // pour le survol, le curseur est posé sur le widget : Kvantum vérifie qu'il y est vraiment.
-// Hors écran, la fenêtre n'est jamais active : les sélections y ont leur couleur de fenêtre inactive.
 // usage : kvstates <dossier contenant le thème Kvantum> <nom du thème> <sortie.png>
 // ex.  : kvstates ~/.local/share/themes/Lagoon/Kvantum Lagoon etats.png
 #include <QApplication>
@@ -16,6 +15,7 @@
 #include <QListView>
 #include <QMenu>
 #include <QPainter>
+#include <QProgressBar>
 #include <QPushButton>
 #include <QRadioButton>
 #include <QScrollBar>
@@ -26,9 +26,11 @@
 #include <QToolBar>
 #include <QToolButton>
 #include <QVBoxLayout>
-#include <QWindow>
 #include <cstdio>
 #include <functional>
+
+// QWidget::activateWindow ne fait rien hors écran ; setActiveWindow, obsolète, le fait encore
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 
 using S = QStyle::State;
 
@@ -103,15 +105,17 @@ int main(int argc, char **argv)
     auto *slider = new QSlider(Qt::Horizontal);
     slider->setValue(55);
     auto *scroll = new QScrollBar(Qt::Horizontal);
+    auto *progress = new QProgressBar;
+    progress->setValue(55);
     for (QWidget *w : {static_cast<QWidget *>(toolbar), static_cast<QWidget *>(plainTool), static_cast<QWidget *>(push), static_cast<QWidget *>(defaultPush), static_cast<QWidget *>(combo),
                        static_cast<QWidget *>(edit), static_cast<QWidget *>(check), static_cast<QWidget *>(radio), static_cast<QWidget *>(tabs),
-                       static_cast<QWidget *>(list), static_cast<QWidget *>(slider), static_cast<QWidget *>(scroll)})
+                       static_cast<QWidget *>(list), static_cast<QWidget *>(slider), static_cast<QWidget *>(scroll), static_cast<QWidget *>(progress)})
         lay->addWidget(w);
     win.resize(400, 600);
     win.show();
     menu->addAction(QStringLiteral("Élément"));
     menu->show();
-    win.windowHandle()->requestActivate();
+    QApplication::setActiveWindow(&win);
     settle(200);
     QWidget other;  // prend le focus pour la colonne « fenêtre inactive »
     other.resize(50, 50);
@@ -201,6 +205,8 @@ int main(int argc, char **argv)
              withPalette(o, combo, r.adjusted(8, 7, -8, -7), s);
              o.subControls = QStyle::SC_All;
              o.currentText = QStringLiteral("Liste");
+             if (s & QStyle::State_HasFocus)  // comme QComboBox::initStyleOption
+                 o.state |= QStyle::State_Selected;
              o.frame = true;
              o.activeSubControls = (s & (QStyle::State_MouseOver | QStyle::State_Sunken)) ? QStyle::SC_ComboBoxFrame : QStyle::SC_None;
              st->drawComplexControl(QStyle::CC_ComboBox, &o, &p, combo);
@@ -240,6 +246,14 @@ int main(int argc, char **argv)
              o.activeSubControls = (s & (QStyle::State_MouseOver | QStyle::State_Sunken)) ? QStyle::SC_SliderHandle : QStyle::SC_None;
              st->drawComplexControl(QStyle::CC_Slider, &o, &p, slider);
          }},
+        {QStringLiteral("Progression"), [&](QPainter &p, QRect r, S s) {
+             QStyleOptionProgressBar o;
+             withPalette(o, progress, r.adjusted(10, 14, -10, -14), s | QStyle::State_Horizontal);
+             o.minimum = 0;
+             o.maximum = 100;
+             o.progress = 55;
+             st->drawControl(QStyle::CE_ProgressBar, &o, &p, progress);
+         }},
         {QStringLiteral("Barre de défilement"), [&](QPainter &p, QRect r, S s) {
              QStyleOptionSlider o;
              withPalette(o, scroll, r.adjusted(8, 12, -8, -12), s | QStyle::State_Horizontal);
@@ -259,7 +273,8 @@ int main(int argc, char **argv)
         {"Repos", on},
         {"Survol", on | QStyle::State_MouseOver},
         {"Appui", on | QStyle::State_MouseOver | QStyle::State_Sunken},
-        {"Focus", on | QStyle::State_HasFocus | QStyle::State_KeyboardFocusChange},
+        {"Focus clavier", on | QStyle::State_HasFocus | QStyle::State_KeyboardFocusChange},
+        {"Focus souris", on | QStyle::State_HasFocus},
         {"Fenêtre inactive", QStyle::State_Enabled, true},
         {"Désactivé", QStyle::State_Active},
     };
@@ -271,7 +286,7 @@ int main(int argc, char **argv)
     for (int c = 0; c < columns.size(); ++c) {
         if (columns[c].inactive) {
             other.show();
-            other.windowHandle()->requestActivate();
+            QApplication::setActiveWindow(&other);
             settle(200);
         }
         p.drawText(QRect(labelW + c * cellW, 0, cellW, headH), Qt::AlignCenter, QString::fromUtf8(columns[c].name));
@@ -284,7 +299,7 @@ int main(int argc, char **argv)
         }
         if (columns[c].inactive) {
             other.hide();
-            win.windowHandle()->requestActivate();
+            QApplication::setActiveWindow(&win);
             settle(200);
         }
     }

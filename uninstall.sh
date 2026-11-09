@@ -81,11 +81,13 @@ remove_lagoon() {
       plasma/layout-templates/com.github.elomkdn.lagoon.dock \
       plasma/layout-templates/com.github.elomkdn.lagoon.topbar \
       plasma/plasmoids/com.github.elomkdn.tealpill icons/catppuccin-mocha-teal-cursors \
-      aurorae/themes/CatppuccinMocha-Classic icons/Teal icons/Teal-Papirus \
+      aurorae/themes/CatppuccinMocha-Classic icons/Teal icons/Teal-Papirus icons/Teal-Settings \
       icons/hicolor/scalable/apps/lagoon-launcher.svg; do
     rm -rf "${DATA:?}/$part"
   done
   [ -L "$HOME/.icons/catppuccin-mocha-teal-cursors" ] && rm -f "$HOME/.icons/catppuccin-mocha-teal-cursors"
+  # System Settings' own icon theme, Teal-Settings
+  kwriteconfig6 --file systemsettingsrc --group Icons --key Theme --delete 2>/dev/null || true
   # the local copies of .desktop files Teal made to name its icons
   # (grep fails when there are none, which must not stop the rest of the cleaning)
   { grep -l '^X-Teal-Icon=true' "$DATA"/applications/*.desktop 2>/dev/null || true; } | xargs -r rm -f
