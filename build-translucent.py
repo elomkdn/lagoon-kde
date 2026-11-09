@@ -27,7 +27,7 @@ import sys
 from pathlib import Path
 
 FRAMES = ("widgets/panel-background.svg", "dialogs/background.svgz", "widgets/tooltip.svg")
-ALPHA = 0.68     # opacité du fond
+ALPHA = 0.75     # opacité du fond : le texte garde 5:1 sur un fond blanc
 GAP = 0.02       # retrait des pixels du masque des coins
 COVER = 0.95     # un pixel couvert à 95 % compte comme plein : l'anticrénelage le peint presque plein
 

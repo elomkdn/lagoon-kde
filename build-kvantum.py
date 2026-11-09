@@ -45,20 +45,21 @@ def mix(a, b, t):
 
 
 POPUP = BASE                              # comme les popups de Plasma : la base Mocha
-POPUP_ALPHA = 0.68                        # et la même opacité (build-translucent.py)
+POPUP_ALPHA = 0.75                        # et la même opacité (build-translucent.py)
 FIELD = mix(BASE, SURFACE0, 0.75)         # champs : un cran au-dessus de la fenêtre
 HOVER = mix(BASE, SURFACE0, 0.8)          # ligne survolée
 TEAL_HOVER = mix(TEAL, TEXT, 0.25)        # accent survolé, un peu plus clair
 FOCUS_RING = mix(BASE, TEAL, 0.5)         # anneau de focus, comme l'accent à 50 % de GTK
 # Sélections des listes, texte sombre (crust) comme dans GTK et Kirigami :
-# - vue qui a le focus : le teal Catppuccin ;
+# - vue qui a le focus : un teal plus profond que l'accent, pour que les dossiers Teal, de la
+#   couleur de l'accent, ne s'y fondent pas (1,6:1 face à eux, 7,8:1 avec le texte) ;
 # - fenêtre inactive : un teal adouci (contraste 5,7:1) ;
 # - sans focus : un teal moyen. Le panneau Emplacements de KIO (Dolphin, toutes les boîtes de
 #   dialogue de fichiers des applis KDE) dessine sa sélection sans dire à Kvantum si la fenêtre
 #   est active, puis y écrit en texte clair : ce teal reste lisible en texte sombre (4,5:1)
 #   comme en texte clair (2,9:1).
-SELECTION_FOCUS = TEAL
 SELECTION = "#2e8a7d"
+SELECTION_FOCUS = mix(TEAL, SELECTION, 0.5)
 SELECTION_INACTIVE = mix(TEAL, BASE, 0.4)
 DEFAULT_TINT = 0.25                         # bouton par défaut : voile teal
 
@@ -93,6 +94,8 @@ SCOPED = {
     r"^itemview-toggled": {"#4b4b4b": SELECTION},
     r"^itemview-pressed": {"#616161": SELECTION_FOCUS},
     r"^slidercursor": {"#3584e4": TEXT, "#2c2c2c": TEXT},  # poignée pleine (anneau et centre)
+    r"^slidercursor(-tickless)?-disabled": {TEXT: OVERLAY0},  # désactivée, elle s'efface
+    r"^(checkbox|radio)-focused": {"#4b4b4b": SURFACE2},   # survolé : bord plus clair qu'au repos
 }
 # Fonds des menus et des infobulles, à POPUP_ALPHA (KvLibadwaita : infobulles noires à 80 %)
 POPUPS = r"^(menu-(normal|shadow)|tooltip-normal)"  # l'ombre des menus dessine le bord de leur fond
@@ -101,7 +104,7 @@ GENERAL_COLORS = {
     "window.color": MANTLE, "base.color": BASE, "alt.base.color": MANTLE,  # comme le jeu de couleurs
     "button.color": SURFACE0, "light.color": SURFACE1, "mid.light.color": mix(SURFACE0, SURFACE1, 0.5),
     "dark.color": MANTLE, "mid.color": SURFACE0,
-    "highlight.color": SELECTION_FOCUS, "inactive.highlight.color": SELECTION_INACTIVE,
+    "highlight.color": TEAL, "inactive.highlight.color": SELECTION_INACTIVE,
     "text.color": TEXT, "window.text.color": TEXT, "button.text.color": TEXT,
     "disabled.text.color": OVERLAY1, "tooltip.base.color": POPUP, "tooltip.text.color": TEXT,
     "highlight.text.color": CRUST, "inactive.highlight.text.color": CRUST,
@@ -139,7 +142,9 @@ SETTINGS = {
                  "translucent_windows": "true", "blurring": "true", "popup_blurring": "true",
                  "reduce_window_opacity": "0", "reduce_menu_opacity": "0",
                  "menu_blur_radius": str(RADIUS), "tooltip_blur_radius": str(RADIUS),
-                 "opaque": OPAQUE_APPS},
+                 "opaque": OPAQUE_APPS,
+                 # chaque bouton d'outils garde ses quatre coins, même collé à un voisin
+                 "group_toolbar_buttons": "false", "toolbar_item_spacing": "2"},
     "Menu": {f"frame.{side}": str(RADIUS) for side in ("top", "bottom", "left", "right")},
     # vue de Dolphin transparente : elle prendrait le fond des fenêtres (mantle) au lieu de base
     "Hacks": {"transparent_dolphin_view": "false"},
@@ -185,6 +190,18 @@ def build_svg(text):
     root = ET.fromstring(text)
     ids = {e.get("id"): e for e in root.iter() if e.get("id")}
     parents = {c: p for p in root.iter() for c in p}
+
+    # bouton d'outils enfoncé : le bord gauche, repris par le droit, est vide chez KvLibadwaita
+    # et laisse une encoche sombre au bout d'un groupe, comme sur le bouton retour de Dolphin
+    set_style(ids["tbutton-pressed-left"][0], opacity="1", fill_opacity="1")
+
+    # piste du curseur, à droite de la poignée : du noir à 25 % chez KvLibadwaita, invisible ici
+    for eid, e in ids.items():
+        if re.match(rf"^slider-normal{PARTS}$", eid):
+            for x in e.iter():
+                if x.tag.endswith("rect"):
+                    x.attrib.pop("opacity", None)
+                    set_style(x, fill=SURFACE1, opacity="1")
 
     # 1. rôles propres à certains éléments, puis fonds des menus et des infobulles
     for eid, e in ids.items():
