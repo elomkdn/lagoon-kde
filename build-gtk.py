@@ -249,6 +249,9 @@ def gtk3_css(adw):
     out.append(rule([".csd popover.background.menu", "popover.background.menu"], "border-radius: 9px"))
     out.append("\n/* slider and switch knobs in Mocha text, as in Plasma; on-screen displays in crust */\n")
     out.append(recolored(adw, lambda s: KNOB.search(s) and not OSD.search(s), knob))
+    # activé, une ombre détache le rond clair du teal, qui a presque la même luminosité
+    out.append(rule([f"switch:checked{state} slider" for state in ("", ":hover", ":active", ":backdrop")],
+                    "box-shadow: 0 0 0 1px rgba(17, 17, 27, 0.55), 0 1px 3px rgba(17, 17, 27, 0.6)"))
     out.append(recolored(adw, OSD.search, osd3))
     out.append("\n/* tooltips: opaque, in Mocha base like Plasma's */\n")
     out.append(rule(["tooltip"], "text-shadow: none"))
@@ -287,6 +290,8 @@ def gtk4_css(adw):
                      "menubar > item popover.menu popover.menu > contents"], "border-radius: 9px"))
     out.append("\n/* slider and switch knobs in Mocha text, as in Plasma; on-screen displays in crust */\n")
     out.append(recolored(adw, lambda s: KNOB.search(s) and not re.search(r"scale\.color|\.osd", s), knob))
+    out.append(rule([f"switch:checked{state} > slider" for state in ("", ":hover", ":active", ":backdrop")],
+                    "box-shadow: 0 0 0 1px rgba(17, 17, 27, 0.55), 0 1px 3px rgba(17, 17, 27, 0.6)"))
     out.append(recolored(adw, OSD.search, osd4))
     out.append("\n/* tooltips: opaque, in Mocha base like Plasma's */\n")
     out.append(rule(["tooltip.background"], f"background-color: {BASE}", f"color: {TEXT}",
