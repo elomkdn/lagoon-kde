@@ -31,7 +31,7 @@ everything in one download.
 - **Window decoration**: Klassy with rounded corners, recommended, or Catppuccin Mocha
   Classic with square corners (see [Rounded windows](#rounded-windows)).
 - **Icons**: [Teal](https://github.com/elomkdn/teal-icons), included and selected by default:
-  Adwair's icons in Catppuccin colors, the apps' own logos, Papirus's system icons. To
+  app icons in Catppuccin colors, the apps' own logos, Papirus's system icons. To
   keep yours, install with `--no-icons`.
 - **Cursors**: Catppuccin Mocha Teal, included.
 
