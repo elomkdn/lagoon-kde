@@ -11,6 +11,17 @@ panel.hiding = "dodgewindows"
 panel.floating = true
 panel.opacity = "translucent"
 
+// the launchers: System Settings, the terminal, the browser and the file manager; Shelly
+// (CachyOS's package manager) and Spotify only where they are installed
+var launchers = ["applications:systemsettings.desktop"]
+if (applicationExists("com.shellyorg.shelly.desktop")) {
+    launchers.push("applications:com.shellyorg.shelly.desktop")
+}
+launchers.push("applications:org.kde.konsole.desktop", "preferred://browser", "preferred://filemanager")
+if (applicationExists("spotify.desktop")) {
+    launchers.push("applications:spotify.desktop")
+}
+
 var tasks = panel.addWidget("org.kde.plasma.icontasks")
 tasks.currentConfigGroup = ["General"]
-tasks.writeConfig("launchers", "applications:systemsettings.desktop,applications:com.shellyorg.shelly.desktop,applications:org.kde.konsole.desktop,preferred://browser,preferred://filemanager,applications:spotify.desktop")
+tasks.writeConfig("launchers", launchers.join(","))

@@ -17,19 +17,23 @@ everything in one download.
   progress and busy indicators all follow the color scheme's accent.
 - **GTK and GNOME apps**: the libadwaita look, like Qt apps, with the same tones and
   teal selections, libadwaita apps included.
-- **Layout**: a top bar and a floating dock. In the middle of the top bar,
-  [Teal Pill](#teal-pill), included. Its launcher is
+- **Layout**: a top bar and a floating dock, with System Settings, the terminal, your browser
+  and your file manager (and Shelly and Spotify where they are installed). In the middle of
+  the top bar, [Teal Pill](#teal-pill), included. Its launcher is
   [App Grid](https://appgrid.xarbit.dev) (`plasma6-applets-appgrid` in the AUR) if it is
   installed when the layout is applied, Plasma's own otherwise.
 - **Translucent panels and popups**: the top bar, the dock, popups and tooltips let the
   blurred desktop show through, with smooth rounded corners and no outline. They turn
   opaque when KWin's blur effect is off, or when a panel is set to opaque.
-- **Wallpapers**: Catppuccin waves and the CachyOS logo; the same waves without the logo, for
-  the lock screen; and *Glow*, a bowl of teal light through fluted glass. All in 7 resolutions.
+- **Wallpapers**: Catppuccin waves and the CachyOS logo, and the same waves without the logo,
+  for the lock screen. Both in 7 resolutions.
+- **Terminal**: Konsole's colors in Mocha, through a *Lagoon* profile; a profile you chose
+  already stays yours, and can take the *Lagoon* color scheme.
 - **Splash screen**: the wallpaper's logo, whose bubbles float up from the C while
   the session loads, then fades into the desktop.
-- **Window decoration**: Klassy with rounded corners, recommended, or Catppuccin Mocha
-  Classic with square corners (see [Rounded windows](#rounded-windows)).
+- **Window decoration**: Klassy with rounded corners, selected by the installer when it is
+  installed, or Catppuccin Mocha Classic with square corners (see
+  [Rounded windows](#rounded-windows)).
 - **Icons**: [Teal](https://github.com/elomkdn/teal-icons), included and selected by default:
   app icons in Catppuccin colors, the apps' own logos, Papirus's system icons. To
   keep yours, install with `--no-icons`.
@@ -43,8 +47,8 @@ everything in one download.
 
 1. Get the theme, either way:
 
-   - **A clone of the repository**: the installer builds the theme first (about 30 s),
-     with Python and librsvg, both there on CachyOS, and downloads the Teal icons. To
+   - **A clone of the repository**: the installer builds the theme first (under a minute),
+     with Python and librsvg alone, both there on CachyOS, and downloads the Teal icons. To
      update, `git pull` and run `./install.sh` again.
 
      ```sh
@@ -73,21 +77,23 @@ everything in one download.
    right-click the desktop, *Add Panel*, then **Lagoon Top Bar** or
    **Lagoon Dock**.
 4. Recommended: rounded windows, like the rest of the theme, with
-   [Klassy](#rounded-windows):
+   [Klassy](#rounded-windows). Install it before Lagoon, or run the installer again after:
 
    ```sh
    paru -S klassy
-   ./install.sh --klassy
+   ./install.sh --apply
    ```
 
 | Option | Effect |
 |---|---|
-| `--klassy` | rounded windows with Klassy, see [Rounded windows](#rounded-windows) |
+| `--klassy` | Klassy with Lagoon's configuration in place of yours, see [Rounded windows](#rounded-windows) |
+| `--no-klassy` | keeps the square decoration even if Klassy is installed |
 | `--firefox` | Firefox's window buttons as the theme's red, yellow and green dots (restart Firefox) |
 | `--no-icons` | keeps your icon theme: Teal is neither installed nor selected |
 | `--apply` | applies Lagoon at the end without asking, keeping your panels and a wallpaper you chose |
 | `--apply-layout` | applies Lagoon with its top bar and dock, in place of your panels |
-| `--no-apply` | installs only, without asking |
+| `--no-apply` | installs only, without asking: your icons, colors and panels stay as they are |
+| `--uninstall` | the same as `./uninstall.sh` |
 
 ## Uninstall
 
@@ -95,8 +101,11 @@ everything in one download.
 ./uninstall.sh
 ```
 
-It removes Lagoon, Teal Pill and the Teal icons, and the settings the installer made. If
-Lagoon is in use, Plasma first goes back to Breeze Dark; your panels stay.
+It removes Lagoon, Teal Pill and the Teal icons, and the settings the installer made: the
+GTK theme, Flatpak apps' access to it, Kvantum's and Klassy's configurations (the ones you
+had before come back), the terminal's profile, Firefox's dots. Catppuccin's cursors and window decoration stay if you
+had them before Lagoon. If Lagoon is in use, Plasma first goes back to Breeze Dark; your
+panels stay.
 
 ## Teal Pill
 
@@ -105,16 +114,18 @@ Lagoon is in use, Plasma first goes back to Breeze Dark; your panels stay.
 [Teal Pill](https://github.com/elomkdn/teal-pill) comes with Lagoon, in the middle of the top
 bar: an island for every player that speaks MPRIS (Spotify, Elisa, Haruna, mpv, Firefox, Chromium, Brave…).
 
-- **The pill**: the cover and bars that dance to the music, in the cover's color; on hover,
-  it widens to show the title. Middle click plays or pauses, the wheel sets the volume.
-- **The card**, on click: the cover, the song, its progress between the times, previous,
-  play/pause and next, a button that opens the player, and synced lyrics (from
-  lrclib.net, only asked for when you open them).
+- **The pill**: the cover and bars that sway while music plays, in the cover's color; on hover,
+  it widens to show the title. Middle click plays or pauses, the wheel sets the volume, the
+  mouse's back and forward buttons skip.
+- **The card**, on click: it comes out just under the pill, with the cover, the song, its
+  progress between the times, previous, play/pause and next, a button that opens the player,
+  and synced lyrics (from lrclib.net, only asked for when you open them). With several
+  players open, each one is there to pick.
 - **What else is going on**: the charger, headphones connecting (with their battery) or the
-  power profile changing widen it for a moment; colored dots show while a microphone records
-  (peach), a camera is in use (green) or the screen is shared (mauve), and when the system
-  was started from a snapshot (yellow); copies and downloads get a bubble of their own, their
-  progress around it.
+  power profile changing widen it for a moment; colored signs show while a microphone records
+  (peach), a camera is in use (green) or the screen is shared (mauve), with the app's name
+  in the tooltip and the card, and when the system was started from a snapshot (yellow);
+  copies and downloads get a bubble of their own, their progress around it.
 
 Its settings (right-click the pill, *Configure Teal Pill…*) choose the players to follow,
 and these activities. It is also available on its own, for other themes.
@@ -130,14 +141,18 @@ The recommended decoration is [Klassy](https://github.com/paulmcauley/klassy), f
 AUR (`paru -S klassy`): KWin then rounds the whole window, blur included. A ready-made
 Klassy configuration is included (`extras/klassy/klassyrc`): 15 px corners, matching
 GTK windows and Plasma popups, the same red, yellow and green buttons, slightly
-translucent title bar, a thin teal outline and a deeper shadow on the active window. Install Klassy, apply the global theme, then run:
+translucent title bar, a thin teal outline and a deeper shadow on the active window.
+
+When Klassy is installed, the installer selects it as it applies Lagoon. A Klassy
+configuration of your own is kept; to take Lagoon's instead (yours is kept as
+`klassyrc.bak`):
 
 ```sh
 ./install.sh --klassy
 ```
 
-Run it again after re-applying the global theme, which switches back to the
-Catppuccin decoration. Your previous `klassyrc` is kept as `klassyrc.bak`.
+Applying the global theme from System Settings selects the Catppuccin decoration again, since
+it has to work without Klassy: `./install.sh --apply` brings the rounded windows back.
 
 ## Kvantum
 

@@ -2,14 +2,19 @@
 # Installs Lagoon for the current user (~/.local/share), from a release archive or
 # from a clone of the repository (the theme is then built first, in a temporary folder).
 #
-# usage: ./install.sh [--klassy] [--firefox] [--no-icons] [--apply | --no-apply]
-#   --klassy      use the Klassy window decoration with rounded corners (15 px)
-#                 instead of the square Catppuccin one; Klassy must be installed
+# usage: ./install.sh [--klassy | --no-klassy] [--firefox] [--no-icons] [--apply | --apply-layout | --no-apply]
+#   --klassy      select the Klassy window decoration (rounded corners, 15 px) right away, with
+#                 Lagoon's configuration in place of yours (kept as klassyrc.bak). Without this
+#                 option, Klassy is selected when Lagoon is applied, if it is installed, and a
+#                 configuration of yours is kept
+#   --no-klassy   keep the square Catppuccin decoration even if Klassy is installed
 #   --firefox     give Firefox's window buttons the theme's red, yellow and green dots, with a
 #                 userChrome.css in each Firefox profile (an existing one is kept)
 #   --no-icons    keep your icon theme: Teal, the theme's icons, is neither installed nor selected
-#   --apply       apply Lagoon at the end without asking (its layout too: --apply-layout)
-#   --no-apply    install only, without asking; apply it later from System Settings
+#   --apply       apply Lagoon at the end without asking, keeping your panels
+#   --apply-layout  apply Lagoon with its top bar and dock, in place of your panels
+#   --no-apply    install only, without asking and without changing a setting of the look;
+#                 apply it later from System Settings
 #   --uninstall   the same as ./uninstall.sh: remove Lagoon, Teal Pill and the Teal icons
 #
 # In a terminal, the installer shows each step as it runs, and asks at the end whether to apply
@@ -29,7 +34,7 @@ DATA=${XDG_DATA_HOME:-$HOME/.local/share}
 CONFIG=${XDG_CONFIG_HOME:-$HOME/.config}
 THEME=Lagoon
 
-klassy=false
+klassy=auto     # auto (when Lagoon is applied, if Klassy is installed), yes, no
 firefox=false
 icons=true
 uninstall=false
@@ -40,7 +45,8 @@ for arg in "$@"; do
   case $arg in
     --gtk) ;;  # older option: the GTK theme is now always selected
     --libadwaita) ;;  # older option: libadwaita apps are now always themed
-    --klassy) klassy=true ;;
+    --klassy) klassy=yes ;;
+    --no-klassy) klassy=no ;;
     --firefox) firefox=true ;;
     --no-icons) icons=false ;;
     --apply) apply=yes; [ "$layout" = ask ] && layout=no ;;
@@ -116,7 +122,22 @@ if [ ! -d "$SRC" ]; then
     exit 1
   fi
   SRC=$WORK/share
-  step "Building the theme (about 30 s)" env DEST="$SRC" "$HERE/build.sh"
+  step "Building the theme (under a minute)" env DEST="$SRC" "$HERE/build.sh"
+fi
+
+# What was there before Lagoon and is not its own: uninstall.sh leaves it in place. Written once,
+# at the first install; without this file (an install by an earlier version), all is removed.
+KEPT=$CONFIG/lagoon/kept
+flatpak_global=$DATA/flatpak/overrides/global
+if [ ! -e "$KEPT" ] && [ ! -d "$DATA/plasma/look-and-feel/Lagoon" ]; then
+  mkdir -p "$(dirname "$KEPT")"
+  {
+    [ -d "$DATA/aurorae/themes/CatppuccinMocha-Classic" ] && echo aurorae
+    [ -d "$DATA/icons/catppuccin-mocha-teal-cursors" ] && echo cursors
+    grep -qs '^filesystems=.*xdg-data/themes' "$flatpak_global" && echo flatpak-themes
+    grep -qs '^filesystems=.*xdg-config/gtk-4.0' "$flatpak_global" && echo flatpak-gtk4
+    true
+  } > "$KEPT"
 fi
 
 # Copy the built files, replacing any previous version
@@ -128,12 +149,13 @@ PARTS=(
   aurorae/themes/CatppuccinMocha-Classic                    # window decoration
   themes/$THEME                                             # GTK theme
   wallpapers/Lagoon                                         # wallpaper
-  wallpapers/Lagoon-Glow                                    # second wallpaper
   wallpapers/Lagoon-Waves                                   # the lock screen's, without the logo
   plasma/layout-templates/com.github.elomkdn.lagoon.dock    # "Add panel" templates
   plasma/layout-templates/com.github.elomkdn.lagoon.topbar
   plasma/plasmoids/com.github.elomkdn.tealpill              # Teal Pill, the top bar's music island
   icons/hicolor/scalable/apps/lagoon-launcher.svg           # the launcher's icon
+  konsole/Lagoon.colorscheme                                # the terminal's colors
+  konsole/Lagoon.profile                                    # and a profile that takes them
 )
 copy_parts() {
   local part
@@ -142,6 +164,7 @@ copy_parts() {
     mkdir -p "$(dirname "$DATA/$part")"
     cp -r "$SRC/$part" "$DATA/$part"
   done
+  rm -rf "${DATA:?}/wallpapers/Lagoon-Glow"  # a wallpaper of earlier versions
   # the cursor page of System Settings looks in ~/.icons, not in ~/.local/share/icons
   if [ "$DATA" = "$HOME/.local/share" ] && [ ! -e "$HOME/.icons/catppuccin-mocha-teal-cursors" ]; then
     mkdir -p "$HOME/.icons"
@@ -255,17 +278,26 @@ if $icons; then
     fi
   fi
   if [ -n "$TEAL" ]; then
-    step "Installing the Teal icons (a few thousand files)" "$TEAL/install.sh" --set
+    # Teal becomes the icon theme when Lagoon is applied (the global theme selects it), not
+    # before: installing alone changes nothing. Already in use, it is set again, which makes
+    # the session load the new files.
+    teal_set=()
+    [ "$previous_icons" = Teal ] && teal_set=(--set)
+    step "Installing the Teal icons (a few thousand files)" "$TEAL/install.sh" "${teal_set[@]}"
   fi
 fi
 
 # --- Klassy and Firefox -----------------------------------------------------------------------
 
-set_klassy() {
+klassy_installed() { ls /usr/lib*/qt6/plugins/org.kde.kdecoration3/org.kde.klassy.so >/dev/null 2>&1; }
+
+set_klassy() { # "ours": Lagoon's configuration even over one of the user's, which is kept as .bak
   local rc=$CONFIG/klassy/klassyrc
-  mkdir -p "$(dirname "$rc")"
-  [ -f "$rc" ] && [ ! -f "$rc.bak" ] && cp "$rc" "$rc.bak"
-  cp "$HERE/extras/klassy/klassyrc" "$rc"
+  if [ "${1:-}" = ours ] || [ ! -f "$rc" ]; then
+    mkdir -p "$(dirname "$rc")"
+    [ -f "$rc" ] && [ ! -f "$rc.bak" ] && cp "$rc" "$rc.bak"
+    cp "$HERE/extras/klassy/klassyrc" "$rc"
+  fi
   kwriteconfig6 --file kwinrc --group org.kde.kdecoration2 --key library org.kde.klassy
   kwriteconfig6 --file kwinrc --group org.kde.kdecoration2 --key theme Klassy
   kwriteconfig6 --file kwinrc --group org.kde.kdecoration2 --key BorderSize None
@@ -274,12 +306,12 @@ set_klassy() {
   kwriteconfig6 --file kwinrc --group org.kde.kdecoration2 --key ButtonsOnRight EHFSM
   qdbus6 org.kde.KWin /KWin reconfigure 2>/dev/null || true
 }
-if $klassy; then
-  if ! ls /usr/lib*/qt6/plugins/org.kde.kdecoration3/org.kde.klassy.so >/dev/null 2>&1; then
+if [ "$klassy" = yes ]; then
+  if ! klassy_installed; then
     echo "Klassy is not installed: install it first (https://github.com/paulmcauley/klassy)" >&2
     exit 1
   fi
-  step "Selecting Klassy, rounded windows (15 px)" set_klassy
+  step "Selecting Klassy, rounded windows (15 px)" set_klassy ours
 fi
 
 # Firefox draws its window buttons itself, out of reach of GTK themes: a userChrome.css gives
@@ -300,7 +332,7 @@ set_firefox() {
         mv "$chrome.new" "$chrome"
       fi
       grep -qs 'legacyUserProfileCustomizations.stylesheets' "$dir/user.js" ||
-        echo 'user_pref("toolkit.legacyUserProfileCustomizations.stylesheets", true);' >> "$dir/user.js"
+        echo 'user_pref("toolkit.legacyUserProfileCustomizations.stylesheets", true); // Lagoon' >> "$dir/user.js"
     done < <(sed -n 's/^Path=//p' "$ini")
   done
 }
@@ -349,12 +381,21 @@ set_wallpaper() {
   plasma-apply-wallpaperimage "$DATA/wallpapers/Lagoon" >/dev/null 2>&1 || true
 }
 
+set_konsole() {
+  # the terminal takes Lagoon's colors through its profile, unless the user has chosen one already
+  [ -z "$(kreadconfig6 --file konsolerc --group "Desktop Entry" --key DefaultProfile 2>/dev/null)" ] || return 0
+  kwriteconfig6 --file konsolerc --group "Desktop Entry" --key DefaultProfile Lagoon.profile
+}
+
 apply_lagoon() {
   set_lock_screen
+  set_konsole
+  # from a neutral folder: given a name that is also a folder where it runs (the release
+  # archive's "Lagoon", for ./Lagoon/install.sh), Plasma would take that folder for the theme
   if [ "$layout" = yes ]; then
-    plasma-apply-lookandfeel -a Lagoon --resetLayout
+    (cd / && plasma-apply-lookandfeel -a Lagoon --resetLayout)
   else
-    plasma-apply-lookandfeel -a Lagoon
+    (cd / && plasma-apply-lookandfeel -a Lagoon)
     set_wallpaper
   fi
   # the global theme selects Teal and the square Catppuccin decoration: keep the user's choices
@@ -362,7 +403,9 @@ apply_lagoon() {
     /usr/lib/plasma-changeicons "$previous_icons" 2>/dev/null ||
       kwriteconfig6 --file kdeglobals --group Icons --key Theme "$previous_icons"
   fi
-  if $klassy; then set_klassy; fi
+  # and rounded windows, with Klassy if it is there: the global theme cannot ask for it, since
+  # it must also work without. A Klassy configuration of the user's stays (--klassy replaces it).
+  if [ "$klassy" != no ] && klassy_installed; then set_klassy; fi
 }
 
 if $in_plasma && [ "$apply" = yes ]; then
@@ -382,8 +425,8 @@ Lagoon is installed. To apply it:
   - or run ./install.sh --apply again.
 EOF
   $kvantum_ok || echo "  - Optional: Kvantum (sudo pacman -S kvantum) gives Qt apps the theme's look."
-  if $klassy; then
-    echo "  - Applying the global theme from System Settings switches back to the square Catppuccin
-    decoration: run ./install.sh --klassy again afterwards."
+  if [ "$klassy" != no ] && klassy_installed; then
+    echo "  - Applying the global theme from System Settings selects the square Catppuccin decoration:
+    ./install.sh --apply selects Klassy and its rounded windows too."
   fi
 fi
