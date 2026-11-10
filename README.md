@@ -102,7 +102,7 @@ everything in one download.
 ```
 
 It removes Lagoon, Teal Pill and the Teal icons, and the settings the installer made: the
-GTK theme, Flatpak apps' access to it, Kvantum's and Klassy's configurations (the ones you
+GTK theme and its window-buttons module, Flatpak apps' access to it, Kvantum's and Klassy's configurations (the ones you
 had before come back), the terminal's profile, Firefox's dots. Catppuccin's cursors and window decoration stay if you
 had them before Lagoon. If Lagoon is in use, Plasma first goes back to Breeze Dark; your
 panels stay.

@@ -3,7 +3,8 @@
 # Teal), avec des rayons d'angle communs à Plasma, Qt et GTK.
 #
 # Installe dans ~/.local/share, ou dans $DEST si défini (ex. : DEST=dist/share ./build.sh).
-# Nécessite librsvg et python3, sans module à installer.
+# Nécessite librsvg et python3, sans module à installer. Avec un compilateur C et les en-têtes
+# de GTK 3, les boutons de fenêtre des applis GTK 3 s'allument ensemble ; sans, un par un.
 set -euo pipefail
 
 HERE=$(dirname "$(realpath "$0")")
@@ -48,6 +49,14 @@ EOF
 # --- Thème GTK : le style de libadwaita (adw-gtk3) aux couleurs de Catppuccin Mocha, accent teal ;
 # les applis libadwaita lisent la même palette (gtk-4.0/lagoon.css, voir install.sh) ---
 python3 -I "$HERE/build-gtk.py" "$HERE/vendor/adw-gtk3" "$DATA/themes" Lagoon
+# --- Module GTK 3 (optionnel) : les boutons de fenêtre s'allument ensemble, voir gtk3-module/ ---
+if command -v cc >/dev/null && pkg-config --exists gtk+-3.0 2>/dev/null; then
+  # shellcheck disable=SC2046  # les options de pkg-config sont à découper
+  cc -shared -fPIC -O2 -Wall -o "$DATA/themes/Lagoon/gtk-3.0/liblagoonbuttons.so" \
+    "$HERE/gtk3-module/lagoonbuttons.c" $(pkg-config --cflags --libs gtk+-3.0)
+else
+  echo "Pas de compilateur C ou d'en-têtes GTK 3 : les boutons des applis GTK 3 réagiront un par un" >&2
+fi
 # --- Style d'applications Kvantum (optionnel) : KvLibadwaita Dark (le style des applis GNOME)
 # aux couleurs et rayons du thème ; menus et infobulles translucides et floutés. Kvantum
 # cherche aussi ses thèmes dans le dossier des thèmes GTK.

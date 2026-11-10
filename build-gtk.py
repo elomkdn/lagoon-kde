@@ -292,7 +292,18 @@ def gtk3_css(adw):
         out.append(rule([c.format(f".{button}") for c in contexts], f"background-color: {color}"))
     out.append(rule([c.format(":hover") for c in contexts], f"color: {BASE}"))
     out.append(rule([c.format(":active") for c in contexts], f"box-shadow: inset 0 0 0 9px {alpha(CRUST, 0.2)}"))
-    out.append(rule([c.format(":backdrop:not(:hover)") for c in contexts], f"background-color: {SURFACE0}"))
+    # fenêtre inactive : adw-gtk3 recolore le texte avec une règle :backdrop, à égaler elle aussi
+    out.append(rule([c.format(f".{b}:backdrop") for b in WINDOW_BUTTONS for c in contexts],
+                    f"background-color: {SURFACE0}", "color: transparent"))
+    for button, color in WINDOW_BUTTONS.items():
+        out.append(rule([c.format(f".{button}:backdrop:hover") for c in contexts],
+                        f"background-color: {color}", f"color: {BASE}"))
+    # tous ensemble au survol : le module gtk3-module/ marque leur boîte tant que le
+    # pointeur y est ; sans lui, les règles ci-dessus les font réagir un par un
+    group = (".titlebar .lagoon-hover button.titlebutton{}:not(.appmenu)", "headerbar .lagoon-hover button.titlebutton{}:not(.appmenu)")
+    for button, color in WINDOW_BUTTONS.items():
+        out.append(rule([g.format(f".{button}{state}") for state in ("", ":backdrop") for g in group],
+                        f"background-color: {color}", f"color: {BASE}"))
     return "".join(out)
 
 
@@ -328,9 +339,15 @@ def gtk4_css(adw):
                     f"-gtk-icon-size: {WINDOW_BUTTON_SIZE - 4}px", "padding: 2px", "box-shadow: none", "color: transparent"))
     for button, color in WINDOW_BUTTONS.items():
         out.append(rule([f"windowcontrols > button.{button} > image"], f"background-color: {color}"))
-    out.append(rule(["windowcontrols > button:hover > image"], f"color: {BASE}"))
+    # le pointeur dans la zone des boutons les allume tous les trois
+    out.append(rule(["windowcontrols:hover > button > image", "headerbar.default-decoration windowcontrols:hover > button > image"],
+                    f"color: {BASE}"))
     out.append(rule(["windowcontrols > button:active > image"], f"box-shadow: inset 0 0 0 9px {alpha(CRUST, 0.2)}"))
-    out.append(rule(["windowcontrols > button:backdrop:not(:hover) > image"], f"background-color: {SURFACE0}"))
+    out.append(rule(["windowcontrols:not(:hover) > button:backdrop > image"], f"background-color: {SURFACE0}"))
+    # libadwaita éteint toute la barre d'une fenêtre inactive ; GTK 4 ne sait pas viser le parent
+    # des boutons survolés : la barre retrouve son éclat sous le pointeur, et les boutons leurs couleurs
+    out.append(rule(["headerbar:backdrop > windowhandle:hover", "toolbarview > .top-bar:backdrop > windowhandle:hover"],
+                    "filter: none"))
     out.append("}\n")
     return "".join(out)
 

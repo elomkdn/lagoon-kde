@@ -11,6 +11,7 @@ ShowIconNormallyActive=false
 ShowIconNormallyInactive=false
 ShowOutlineNormallyActive=true
 ShowOutlineNormallyInactive=true
+UnisonHovering=true
 VaryColorCloseBackgroundActive=Opaque
 VaryColorCloseBackgroundInactive=Opaque
 VaryColorCloseOutlineActive=Opaque

@@ -119,6 +119,8 @@ remove_lagoon() {
       kwriteconfig6 "${lock[@]}" --key Image --delete
       kwriteconfig6 "${lock[@]}" --key PreviewImage --delete ;;
   esac
+  # what loads the GTK 3 module, which went with the GTK theme
+  rm -f "$CONFIG/plasma-workspace/env/lagoon-gtk3.sh"
   # the libadwaita line
   [ -f "$CONFIG/gtk-4.0/gtk.css" ] && sed -i "\|/themes/$THEME/gtk-4.0/|d" "$CONFIG/gtk-4.0/gtk.css"
   # Flatpak apps' access to the themes and to that line

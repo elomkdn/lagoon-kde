@@ -226,8 +226,22 @@ setup_gtk() {
     sed -i "s|^Net/ThemeName .*|Net/ThemeName \"$THEME\"|" "$x"
     pkill -HUP xsettingsd 2>/dev/null || true
   fi
+
+  # GTK 3 window buttons light up together through a small module, which GTK loads from this
+  # variable. Plasma reads this folder when it starts: it works from the next session on.
+  local module=$DATA/themes/$THEME/gtk-3.0/liblagoonbuttons.so script=$CONFIG/plasma-workspace/env/lagoon-gtk3.sh
+  if [ -f "$module" ] && ! ldd "$module" 2>&1 | grep -q 'not found'; then
+    mkdir -p "$(dirname "$script")"
+    printf 'export GTK3_MODULES="%s${GTK3_MODULES:+:$GTK3_MODULES}"\n' "$module" > "$script"
+  else
+    rm -f "$script"
+    touch "$WORK/no-gtk3-module"
+  fi
 }
 step "Theming GTK and GNOME apps" setup_gtk
+if [ -e "$WORK/no-gtk3-module" ]; then
+  note "The window buttons of GTK 3 apps will light up one at a time: their module is missing or cannot load here."
+fi
 if [ -e "$WORK/dconf-stuck" ]; then
   note "dconf does not save GTK settings: log out and back in, then run this script again."
 fi
