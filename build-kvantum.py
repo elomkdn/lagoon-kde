@@ -14,8 +14,10 @@ l'accent teal et aux rayons du thème GTK (9 px).
   ouverture qu'avec la translucidité des fenêtres (translucent_windows, blurring) : sans elle,
   popup_blurring seul n'applique pas le flou, sous Wayland, et les menus laissent voir net ce
   qu'il y a derrière ;
-- sélections des listes : teal et texte sombre ; un teal moyen pour les listes sans focus, à
-  cause du panneau Emplacements de KIO (voir SELECTION) ;
+- sélections des listes : l'accent teal et un texte sombre, comme dans GTK, Kirigami et le jeu
+  de couleurs Catppuccin ; un teal moyen pour les listes sans focus, à cause du panneau
+  Emplacements de KIO (voir SELECTION) ;
+- curseurs et barres de progression : les épaisseurs de libadwaita (4 et 8 px), comme GTK ;
 - poignée des curseurs : un disque plein en text, comme celles de GTK et de Plasma (l'anneau
   teal de KvLibadwaita était la seule de son espèce) ;
 - rayons : les coins de KvLibadwaita sont des quarts de disque pleins, à l'échelle de la
@@ -51,15 +53,16 @@ HOVER = mix(BASE, SURFACE0, 0.8)          # ligne survolée
 TEAL_HOVER = mix(TEAL, TEXT, 0.25)        # accent survolé, un peu plus clair
 FOCUS_RING = mix(BASE, TEAL, 0.5)         # anneau de focus, comme l'accent à 50 % de GTK
 # Sélections des listes, texte sombre (crust) comme dans GTK et Kirigami :
-# - vue qui a le focus : un teal plus profond que l'accent, pour que les dossiers Teal, de la
-#   couleur de l'accent, ne s'y fondent pas (1,6:1 face à eux, 7,8:1 avec le texte) ;
+# - vue qui a le focus : l'accent lui-même (12,6:1 avec le texte), la sélection de GTK, de
+#   Kirigami et de Plasma. Les dossiers Teal, de la même couleur, s'en détachent par leur ombre
+#   (teal-icons, add_folder_shadow) ;
 # - fenêtre inactive : un teal adouci (contraste 5,7:1) ;
 # - sans focus : un teal moyen. Le panneau Emplacements de KIO (Dolphin, toutes les boîtes de
 #   dialogue de fichiers des applis KDE) dessine sa sélection sans dire à Kvantum si la fenêtre
 #   est active, puis y écrit en texte clair : ce teal reste lisible en texte sombre (4,5:1)
 #   comme en texte clair (2,9:1).
 SELECTION = "#2e8a7d"
-SELECTION_FOCUS = mix(TEAL, SELECTION, 0.5)
+SELECTION_FOCUS = TEAL
 SELECTION_INACTIVE = mix(TEAL, BASE, 0.4)
 INACTIVE_ACCENT = mix(OVERLAY1, TEAL, 0.25)  # l'accent éteint des fenêtres inactives
 FOCUS_FRAMES = ("button", "combo", "tab")   # les contrôles entourés d'un anneau de focus
@@ -147,11 +150,14 @@ SETTINGS = {
                  "opaque": OPAQUE_APPS,
                  # chaque bouton d'outils garde ses quatre coins, même collé à un voisin
                  "group_toolbar_buttons": "false", "toolbar_item_spacing": "2",
-                 "combo_focus_rect": "true"},
+                 "combo_focus_rect": "true",
+                 # les épaisseurs de libadwaita, celles du thème GTK
+                 "slider_width": "4", "progressbar_thickness": "8"},
     "Menu": {f"frame.{side}": str(RADIUS) for side in ("top", "bottom", "left", "right")},
     # vue de Dolphin transparente : elle prendrait le fond des fenêtres (mantle) au lieu de base
     "Hacks": {"transparent_dolphin_view": "false"},
-    "ItemView": {"text.press.color": CRUST, "text.toggle.color": CRUST, "text.toggle.inactive.color": CRUST},
+    "ItemView": {"text.press.color": CRUST, "text.press.inactive.color": CRUST,
+                 "text.toggle.color": CRUST, "text.toggle.inactive.color": CRUST},
     # pas de rectangle pointillé de focus en plus : l'élément sélectionné se voit déjà à son fond
     "Focus": {"frame": "false"},
     # à la place, un anneau arrondi autour du contrôle qui a le focus, comme celui des champs ;
@@ -159,6 +165,11 @@ SETTINGS = {
     "PanelButtonCommand": {"focusFrame": "true"},
     "ComboBox": {"focusFrame": "true"},
     "Tab": {"focusFrame": "true"},
+    # bouts ronds, comme GTK : des cadres de la moitié de l'épaisseur (ceux hérités des boutons,
+    # plus hauts que la barre, seraient abandonnés par Kvantum, qui la dessinerait carrée)
+    "Slider": {f"frame.{side}": "2" for side in ("top", "bottom", "left", "right")},
+    "Progressbar": {f"frame.{side}": "4" for side in ("top", "bottom", "left", "right")},
+    "ProgressbarContents": {f"frame.{side}": "4" for side in ("top", "bottom", "left", "right")},
 }
 for sections, corner in EXPAND.values():
     for section in sections:
@@ -211,6 +222,21 @@ def build_svg(text):
                     x.attrib.pop("opacity", None)
                     set_style(x, fill=SURFACE1, opacity="1")
 
+    # bouts ronds des curseurs et des barres de progression : leurs coins, des carrés pleins chez
+    # KvLibadwaita (invisibles à 2 px d'épaisseur), deviennent des quarts de disque
+    for eid, e in ids.items():
+        m = re.match(r"^(?:slider-(?:normal|toggled)|progress-normal|progress-pattern-(?:normal|disabled))"
+                     r"-(top|bottom)(left|right)$", eid)
+        if m and e.tag.endswith("rect"):
+            x, y, w, h = (float(e.get(k)) for k in ("x", "y", "width", "height"))
+            cx, far_x = (x + w, x) if m.group(2) == "left" else (x, x + w)   # centre du disque, bord opposé
+            cy, far_y = (y + h, y) if m.group(1) == "top" else (y, y + h)
+            sweep = 0 if (m.group(1) == "top") == (m.group(2) == "left") else 1
+            e.tag = f"{{{SVG_NS}}}path"
+            for k in ("x", "y", "width", "height"):
+                del e.attrib[k]
+            e.set("d", f"M {cx:g},{far_y:g} A {w:g},{h:g} 0 0 {sweep} {far_x:g},{cy:g} L {cx:g},{cy:g} Z")
+
     # 1. rôles propres à certains éléments, puis fonds des menus et des infobulles
     for eid, e in ids.items():
         for pattern, mapping in SCOPED.items():
@@ -221,12 +247,14 @@ def build_svg(text):
                 if POPUP in (x.get("style") or ""):
                     set_style(x, fill_opacity=f"{POPUP_ALPHA:g}", opacity="1")
 
-    # 2. sélection inactive : copie de la sélection, plus sombre
+    # 2. sélection inactive : copie de la sélection, adoucie ; de même pour la vue qui garde le
+    #    focus dans une fenêtre inactive (sans pièce -inactive, Kvantum y laisserait l'accent plein)
     for eid, e in list(ids.items()):
-        if re.match(rf"^itemview-toggled{PARTS}$", eid):
-            parents[e].append(renamed(e, eid.replace("itemview-toggled", "itemview-toggled-inactive"),
-                                      {SELECTION: SELECTION_INACTIVE},
-                                      ("itemview-toggled", "itemview-toggled-inactive")))
+        for state, color in (("toggled", SELECTION), ("pressed", SELECTION_FOCUS)):
+            if re.match(rf"^itemview-{state}{PARTS}$", eid):
+                parents[e].append(renamed(e, eid.replace(f"itemview-{state}", f"itemview-{state}-inactive"),
+                                          {color: SELECTION_INACTIVE},
+                                          (f"itemview-{state}", f"itemview-{state}-inactive")))
 
     # bouton par défaut des dialogues (OK, Enregistrer…) : Kvantum pose « button-default »
     # par-dessus l'état du bouton ; un voile teal le distingue, comme l'action suggérée de GNOME,

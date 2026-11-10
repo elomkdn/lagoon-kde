@@ -10,8 +10,9 @@ infobulles) en base, le texte en text ; les sélections en teal avec un texte so
 douces en fenêtre inactive ; les boutons de fenêtre en pastilles rouge, jaune et verte, comme
 la décoration Catppuccin Mocha Classic. Les widgets reprennent aussi les choix du style
 Kvantum : boutons en graisse normale, bouton d'action suggérée voilé de teal comme le bouton
-par défaut, onglets en pastille, menus aux coins de 9 px ; poignées des curseurs et
-interrupteurs en text, comme dans Plasma ; OSD en crust. Le fond des boutons reste le voile
+par défaut, onglets en pastille, menus aux coins de 9 px ; poignées des curseurs en text,
+comme dans Plasma ; interrupteurs à bouton sombre, comme les coches et le texte posés sur
+l'accent (voir switches) ; OSD en crust. Le fond des boutons reste le voile
 de libadwaita (10 % du texte) : une règle générale sur les boutons, chargée par les applis
 libadwaita avec la priorité du CSS utilisateur, passerait devant les boutons plats et ceux
 que les applis colorent elles-mêmes.
@@ -30,7 +31,7 @@ import sys
 from pathlib import Path
 
 # Catppuccin Mocha, palette officielle (github.com/catppuccin/palette)
-CRUST, MANTLE, BASE, SURFACE0, TEXT = "#11111b", "#181825", "#1e1e2e", "#313244", "#cdd6f4"
+CRUST, MANTLE, BASE, SURFACE0, SURFACE2, TEXT = "#11111b", "#181825", "#1e1e2e", "#313244", "#585b70", "#cdd6f4"
 TEAL, RED, YELLOW, GREEN = "#94e2d5", "#f38ba8", "#f9e2af", "#a6e3a1"
 
 
@@ -96,7 +97,7 @@ KEEP = re.compile(r"popover|menu|\.osd|tabbar|calendar|button|progressbar|trough
                   r"chromium|Mozilla|terminal|nemo|caja|geary|gnc-id|wnck|content-view|:drop|\.error|"
                   r"\.warning|infobar|print|dialog-host|source-list")
 OSD = re.compile(r"\.osd|app-notification|touch-selection|magnifier")
-KNOB = re.compile(r"(scale|switch)[^,]*slider")
+KNOB = re.compile(r"scale[^,]*slider")
 
 
 def rules(css):
@@ -164,7 +165,14 @@ def tabs(css, checked):
         if selectors and re.search(r"box-shadow:\s*inset", body):
             out.append(rule(selectors, "box-shadow: none"))
     sides = [f"notebook > header.{side} > tabs > tab:checked" for side in ("top", "bottom", "left", "right")]
-    return "".join(out) + rule(["notebook > header > tabs > tab"], "border-radius: 9px") + rule(sides, checked)
+    # le cadre des onglets : arrondi comme le reste (12 px, les coins des cartes), et sa barre
+    # d'onglets avec lui, du côté où elle touche le cadre
+    frame = rule(["notebook.frame"], "border-radius: 12px")
+    for side, radius in (("top", "11px 11px 0 0"), ("bottom", "0 0 11px 11px"),
+                         ("left", "11px 0 0 11px"), ("right", "0 11px 11px 0")):
+        frame += rule([f"notebook.frame > header.{side}"], f"border-radius: {radius}")
+    return ("".join(out) + rule(["notebook > header > tabs > tab"], "border-radius: 9px") + rule(sides, checked)
+            + frame)
 
 
 def recolored(css, select, replace):
@@ -200,6 +208,24 @@ def knob(declaration):
     declaration = re.sub(r"color-mix\(in srgb, white \d+%, var\(--view-bg-color\)\)", TEXT, declaration)
     declaration = re.sub(r"mix\(white,@view_bg_color,0\.\d+\)", TEXT, declaration)
     return re.sub(r"\bwhite\b", TEXT, declaration)
+
+
+def switches(child):
+    """Interrupteurs, comme ceux de Plasma (plasma-theme/widgets/switch.svgz) : la piste s'allume
+    en teal, et le bouton reste sombre (crust) dans tous les états, comme les coches et le texte
+    posés sur l'accent. Un bouton clair sur le teal, presque de la même luminosité, demandait un
+    liseré pour s'en détacher. child : « > » en GTK 4, rien en GTK 3."""
+    states = ("", ":hover", ":active", ":checked", ":checked:hover", ":checked:active", ":backdrop",
+              ":checked:backdrop", ":disabled")
+    knob = [f"switch{state} {child} slider".replace("  ", " ") for state in states]
+    knob += [f"switch {child} slider{state}".replace("  ", " ") for state in (":hover", ":active", ":disabled", ":backdrop")]
+    return (rule(["switch", "switch:backdrop"], f"background-color: {SURFACE2}", "background-image: none",
+                 "border-color: transparent")
+            + rule(["switch:hover", "switch:active"], f"background-color: {mix(SURFACE2, TEXT, 0.1)}")
+            + rule(["switch:checked", "switch:checked:hover", "switch:checked:active", "switch:checked:backdrop"],
+                   f"background-color: {TEAL}", "background-image: none")
+            + rule(knob, f"background-color: {CRUST}", "background-image: none", "box-shadow: none",
+                   "border-color: transparent"))
 
 
 def accent_text(css):
@@ -247,11 +273,9 @@ def gtk3_css(adw):
     out.append(regular_buttons(adw))
     out.append(tabs(adw, "background-color: alpha(currentColor, 0.15)"))
     out.append(rule([".csd popover.background.menu", "popover.background.menu"], "border-radius: 9px"))
-    out.append("\n/* slider and switch knobs in Mocha text, as in Plasma; on-screen displays in crust */\n")
+    out.append("\n/* slider knobs in Mocha text, as in Plasma; switches with a dark knob; on-screen displays in crust */\n")
     out.append(recolored(adw, lambda s: KNOB.search(s) and not OSD.search(s), knob))
-    # activé, une ombre détache le rond clair du teal, qui a presque la même luminosité
-    out.append(rule([f"switch:checked{state} slider" for state in ("", ":hover", ":active", ":backdrop")],
-                    "box-shadow: 0 0 0 1px rgba(17, 17, 27, 0.55), 0 1px 3px rgba(17, 17, 27, 0.6)"))
+    out.append(switches(""))
     out.append(recolored(adw, OSD.search, osd3))
     out.append("\n/* tooltips: opaque, in Mocha base like Plasma's */\n")
     out.append(rule(["tooltip"], "text-shadow: none"))
@@ -288,10 +312,9 @@ def gtk4_css(adw):
     out.append(tabs(adw, "background-color: color-mix(in srgb, currentColor 15%, transparent)"))
     out.append(rule(["popover.menu > contents", "popover.menu > arrow",
                      "menubar > item popover.menu popover.menu > contents"], "border-radius: 9px"))
-    out.append("\n/* slider and switch knobs in Mocha text, as in Plasma; on-screen displays in crust */\n")
+    out.append("\n/* slider knobs in Mocha text, as in Plasma; switches with a dark knob; on-screen displays in crust */\n")
     out.append(recolored(adw, lambda s: KNOB.search(s) and not re.search(r"scale\.color|\.osd", s), knob))
-    out.append(rule([f"switch:checked{state} > slider" for state in ("", ":hover", ":active", ":backdrop")],
-                    "box-shadow: 0 0 0 1px rgba(17, 17, 27, 0.55), 0 1px 3px rgba(17, 17, 27, 0.6)"))
+    out.append(switches(">"))
     out.append(recolored(adw, OSD.search, osd4))
     out.append("\n/* tooltips: opaque, in Mocha base like Plasma's */\n")
     out.append(rule(["tooltip.background"], f"background-color: {BASE}", f"color: {TEXT}",
