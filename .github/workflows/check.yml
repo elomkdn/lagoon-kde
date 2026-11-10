@@ -1,0 +1,11 @@
+# À chaque envoi : tools/check.sh, dans un conteneur Arch (ce que CachyOS a sous la main).
+name: check
+on: [push, pull_request]
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    container: archlinux:latest
+    steps:
+      - run: pacman -Syu --noconfirm git python librsvg kconfig gettext diffutils
+      - uses: actions/checkout@v4
+      - run: tools/check.sh
