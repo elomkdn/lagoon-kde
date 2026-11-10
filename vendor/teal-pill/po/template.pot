@@ -81,14 +81,6 @@ msgstr ""
 msgid "Always show the title, not only on hover"
 msgstr ""
 
-#: package/contents/ui/config/General.qml:123
-msgid "Title width:"
-msgstr ""
-
-#: package/contents/ui/config/General.qml:127
-msgid "%1 px"
-msgstr ""
-
 #: package/contents/ui/config/General.qml:133
 msgid "Colors:"
 msgstr ""
@@ -119,18 +111,6 @@ msgstr ""
 msgid "Copies and downloads in progress"
 msgstr ""
 
-#: package/contents/ui/config/General.qml:159
-msgid "A dot while a microphone records"
-msgstr ""
-
-#: package/contents/ui/config/General.qml:163
-msgid "A dot while a camera is in use"
-msgstr ""
-
-#: package/contents/ui/config/General.qml:167
-msgid "A dot while the screen is shared or recorded"
-msgstr ""
-
 #: package/contents/ui/config/General.qml:171
 msgid "Headphones connecting, with their battery"
 msgstr ""
@@ -145,10 +125,6 @@ msgstr ""
 
 #: package/contents/ui/IslandFull.qml:156 package/contents/ui/main.qml:33
 msgid "Nothing playing"
-msgstr ""
-
-#: package/contents/ui/IslandFull.qml:223
-msgid "Open %1 (right click: next player)"
 msgstr ""
 
 #: package/contents/ui/IslandFull.qml:223
@@ -169,4 +145,22 @@ msgstr ""
 
 #: package/contents/ui/IslandFull.qml:269
 msgid "Show the lyrics"
+msgstr ""
+
+msgid "%1 is using the microphone"
+msgstr ""
+
+msgid "The microphone is in use"
+msgstr ""
+
+msgid "%1 is using the camera"
+msgstr ""
+
+msgid "The camera is in use"
+msgstr ""
+
+msgid "%1 is sharing the screen"
+msgstr ""
+
+msgid "The screen is being shared"
 msgstr ""

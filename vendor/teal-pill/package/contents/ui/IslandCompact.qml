@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Shapes
+import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.plasmoid
 import org.kde.plasma.components as PlasmaComponents3
 import org.kde.kirigami as Kirigami
@@ -9,8 +10,8 @@ import "code/catppuccin.js" as Catppuccin
 
 // In the panel, an island: a pill in Mocha's darkest color (crust). It holds the music (the
 // cover and the dancing bars, the title on hover or always); the charger, headphones or a power
-// profile take it for a moment; colored dots tell a microphone, a camera, a shared screen or a
-// snapshot; transfers get a bubble of their own beside it, with their progress around.
+// profile take it for a moment; small colored signs tell a microphone, a camera, a shared screen
+// or a snapshot; transfers get a bubble of their own beside it, with their progress around.
 // Click: the card; middle click: play/pause; wheel: volume.
 MouseArea {
     id: island
@@ -19,14 +20,20 @@ MouseArea {
     Kirigami.Theme.inherit: false
     Kirigami.Theme.textColor: Catppuccin.TEXT
 
-    readonly property bool hasMedia: player.ready
+    readonly property bool hasMedia: root.hasMedia
     readonly property bool flashing: activities.flashing
     // nearly the panel's height, whatever it is: a thin bar must not make a tiny pill
     readonly property real pillHeight: Math.max(Kirigami.Units.iconSizes.small + 6, height - 4)
     readonly property real coverSize: pillHeight - 6
-    readonly property bool open: hasMedia && !flashing && (containsMouse || root.expanded || Plasmoid.configuration.alwaysShowTitle)
-    readonly property real titleRoom: open ? Math.min(title.implicitWidth, Plasmoid.configuration.titleWidth) : 0
-    readonly property bool showPill: hasMedia || flashing || activities.dots.length > 0 || Plasmoid.configuration.showWhenNoMedia
+    readonly property bool open: hasMedia && !flashing && (containsMouse || Plasmoid.configuration.alwaysShowTitle)
+    readonly property real titleRoom: open ? Math.min(title.implicitWidth, Kirigami.Units.gridUnit * 12) : 0
+    readonly property bool hasSigns: activities.inUse.length > 0 || activities.snapshot
+    readonly property bool showPill: hasMedia || flashing || hasSigns || root.cardOpen || Plasmoid.configuration.showWhenNoMedia
+
+    Component.onCompleted: {
+        root.pillItem = pill;
+        root.pillCoverItem = pillCover;
+    }
 
     Layout.preferredWidth: row.width + Kirigami.Units.smallSpacing * 2
     Layout.minimumWidth: Layout.preferredWidth
@@ -40,7 +47,7 @@ MouseArea {
         case Qt.MiddleButton: player.playPause(); break;
         case Qt.BackButton: player.previous(); break;
         case Qt.ForwardButton: player.next(); break;
-        default: root.expanded = !root.expanded;
+        default: root.toggleCard();
         }
     }
     onWheel: wheel => player.changeVolume(wheel.angleDelta.y / 120 * 0.05, true)
@@ -58,8 +65,14 @@ MouseArea {
             radius: height / 2
             color: Catppuccin.CRUST
             clip: true
+            // it gives way as the card leaves, and takes the card back with a small bump
+            scale: 1 - 0.05 * root.cardProgress
 
-            Behavior on width { NumberAnimation { duration: Kirigami.Units.longDuration; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
+            // a spring keeps its speed when the mouse comes back halfway
+            Behavior on width {
+                enabled: Kirigami.Units.longDuration > 0
+                SpringAnimation { spring: 5; damping: 0.45; epsilon: 0.25 }
+            }
 
             // the music, or the microphone alone
             RowLayout {
@@ -71,21 +84,58 @@ MouseArea {
                 opacity: island.flashing ? 0 : 1
                 Behavior on opacity { NumberAnimation { duration: Kirigami.Units.shortDuration } }
 
-                Cover {
+                // the cover; while it is away in the card, a chevron that folds the card back
+                Item {
+                    id: pillCover
                     Layout.preferredWidth: island.coverSize
                     Layout.preferredHeight: island.coverSize
                     visible: island.hasMedia
-                    source: player.artUrl
-                    accent: root.accent
-                    radius: height / 2
+
+                    Cover {
+                        anchors.fill: parent
+                        visible: root.cardProgress <= 0.02
+                        source: player.artUrl
+                        accent: root.accent
+                        radius: height / 2
+                    }
+
+                    Rectangle {
+                        anchors.fill: parent
+                        radius: height / 2
+                        color: Qt.alpha(Kirigami.Theme.textColor, root.pillHovered ? 0.16 : 0.07)
+                        opacity: chevron.opacity
+                        Behavior on color { ColorAnimation { duration: Kirigami.Units.shortDuration } }
+                    }
+
+                    Kirigami.Icon {
+                        id: chevron
+                        anchors.centerIn: parent
+                        width: Math.round(parent.width * 0.7)
+                        height: width
+                        scale: 0.6 + 0.4 * opacity
+                        opacity: Math.max(0, Math.min(1, (root.cardProgress - 0.45) / 0.55))
+                        // not every icon theme has the first name of each pair
+                        readonly property var names: {
+                            switch (Plasmoid.location) {
+                            case PlasmaCore.Types.BottomEdge: return ["arrow-down", "go-down-symbolic"];
+                            case PlasmaCore.Types.LeftEdge: return ["arrow-left", "go-previous-symbolic"];
+                            case PlasmaCore.Types.RightEdge: return ["arrow-right", "go-next-symbolic"];
+                            default: return ["arrow-up", "go-up-symbolic"];
+                            }
+                        }
+                        source: names[0]
+                        fallback: names[1]
+                        isMask: true
+                        color: Kirigami.Theme.textColor
+                    }
                 }
 
                 Kirigami.Icon {
                     Layout.preferredWidth: Kirigami.Units.iconSizes.small
                     Layout.preferredHeight: Kirigami.Units.iconSizes.small
                     Layout.leftMargin: 4
-                    visible: !island.hasMedia
-                    source: activities.dots[0]?.icon ?? "view-media-track"
+                    visible: !island.hasMedia && !island.hasSigns
+                    source: "view-media-track"
                 }
 
                 Marquee {
@@ -101,25 +151,32 @@ MouseArea {
                 PlayingBars {
                     Layout.preferredWidth: Math.round(island.coverSize * 0.85)
                     Layout.preferredHeight: Math.round(island.coverSize * 0.7)
-                    Layout.rightMargin: activities.dots.length > 0 ? 0 : 2
+                    Layout.rightMargin: island.hasSigns ? 0 : 2
                     visible: island.hasMedia
                     color: root.accent
                     running: root.playing
                     opacity: root.playing ? 1 : 0.45
                 }
 
-                // a microphone, a camera, a shared screen, a snapshot
+                // a microphone, a camera, a shared screen
                 Repeater {
-                    model: activities.dots
+                    model: activities.inUse
 
-                    Rectangle {
+                    Sign {
                         required property var modelData
-                        Layout.preferredWidth: 7
-                        Layout.preferredHeight: 7
                         Layout.rightMargin: 2
-                        radius: 3.5
+                        source: modelData.icon
+                        fallback: modelData.fallback ?? "unknown"
                         color: modelData.color
                     }
+                }
+
+                // the system's own state, apart from who is using what
+                Sign {
+                    visible: activities.snapshot
+                    Layout.rightMargin: 2
+                    source: "drive-harddisk-symbolic"
+                    color: Catppuccin.MOCHA.yellow
                 }
             }
 

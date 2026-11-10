@@ -50,12 +50,6 @@ msgstr "Afficher quand rien ne joue"
 msgid "Always show the title, not only on hover"
 msgstr "Toujours afficher le titre, pas seulement au survol"
 
-msgid "Title width:"
-msgstr "Largeur du titre :"
-
-msgid "%1 px"
-msgstr "%1 px"
-
 msgid "Colors:"
 msgstr "Couleurs :"
 
@@ -67,9 +61,6 @@ msgstr "Paroles :"
 
 msgid "From lrclib.net, a free database: the title and artist of the song you open them for are sent to it."
 msgstr "Depuis lrclib.net, une base libre : le titre et l’artiste du morceau dont vous ouvrez les paroles lui sont envoyés."
-
-msgid "Open %1 (right click: next player)"
-msgstr "Ouvrir %1 (clic droit : lecteur suivant)"
 
 msgid "Hide the lyrics"
 msgstr "Masquer les paroles"
@@ -88,15 +79,6 @@ msgstr "Chargeur branché ou débranché"
 
 msgid "Copies and downloads in progress"
 msgstr "Copies et téléchargements en cours"
-
-msgid "A dot while a microphone records"
-msgstr "Un point quand un micro enregistre"
-
-msgid "A dot while a camera is in use"
-msgstr "Un point quand une caméra est utilisée"
-
-msgid "A dot while the screen is shared or recorded"
-msgstr "Un point quand l’écran est partagé ou enregistré"
 
 msgid "Headphones connecting, with their battery"
 msgstr "Connexion d’un casque, avec sa batterie"
@@ -131,3 +113,21 @@ msgstr "%1 (fermé)"
 
 msgid "Open a player to choose it here."
 msgstr "Ouvrez un lecteur pour le choisir ici."
+
+msgid "%1 is using the microphone"
+msgstr "%1 utilise le micro"
+
+msgid "The microphone is in use"
+msgstr "Le micro est utilisé"
+
+msgid "%1 is using the camera"
+msgstr "%1 utilise la caméra"
+
+msgid "The camera is in use"
+msgstr "La caméra est utilisée"
+
+msgid "%1 is sharing the screen"
+msgstr "%1 partage l’écran"
+
+msgid "The screen is being shared"
+msgstr "L’écran est partagé"

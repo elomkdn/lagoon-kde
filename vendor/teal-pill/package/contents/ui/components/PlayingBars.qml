@@ -1,7 +1,7 @@
 import QtQuick
 
-// Four centered bars that dance while music plays: each one picks its next
-// height and its own tempo at random, so the motion never loops; the middle ones reach higher.
+// Four centered bars that sway while music plays: each one picks its next height and its own
+// unhurried tempo at random, so the motion never loops; the middle ones reach higher.
 // When the music stops, they settle into small equal dots.
 Row {
     id: bars
@@ -36,9 +36,9 @@ Row {
                 triggeredOnStart: true
                 interval: 200
                 onTriggered: {
-                    interval = 130 + Math.random() * 230;
+                    interval = 320 + Math.random() * 380;
                     glide.duration = interval;
-                    bar.level = bars.rest + Math.random() * (bars.reach[bar.index] - bars.rest);
+                    bar.level = bars.rest + (0.25 + Math.random() * 0.75) * (bars.reach[bar.index] - bars.rest);
                 }
                 onRunningChanged: if (!running) {
                     glide.duration = 300;

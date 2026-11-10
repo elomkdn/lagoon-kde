@@ -15,10 +15,6 @@
     <entry name="alwaysShowTitle" type="Bool">
       <default>false</default>
     </entry>
-    <!-- in the panel, the title's widest width, in pixels -->
-    <entry name="titleWidth" type="Int">
-      <default>220</default>
-    </entry>
     <entry name="tintFromCover" type="Bool">
       <default>true</default>
     </entry>
@@ -29,19 +25,10 @@
     <entry name="showTransfers" type="Bool">
       <default>true</default>
     </entry>
-    <entry name="showMicrophone" type="Bool">
-      <default>true</default>
-    </entry>
     <entry name="showBluetooth" type="Bool">
       <default>true</default>
     </entry>
     <entry name="showPowerProfile" type="Bool">
-      <default>true</default>
-    </entry>
-    <entry name="showCamera" type="Bool">
-      <default>true</default>
-    </entry>
-    <entry name="showScreenShare" type="Bool">
       <default>true</default>
     </entry>
     <entry name="showSnapshot" type="Bool">

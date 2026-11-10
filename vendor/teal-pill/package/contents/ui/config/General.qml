@@ -11,15 +11,11 @@ KCM.SimpleKCM {
     property string cfg_players
     property alias cfg_showWhenNoMedia: showWhenNoMedia.checked
     property alias cfg_alwaysShowTitle: alwaysShowTitle.checked
-    property alias cfg_titleWidth: titleWidth.value
     property alias cfg_tintFromCover: tintFromCover.checked
     property alias cfg_showCharger: showCharger.checked
     property alias cfg_showTransfers: showTransfers.checked
-    property alias cfg_showMicrophone: showMicrophone.checked
     property alias cfg_showBluetooth: showBluetooth.checked
     property alias cfg_showPowerProfile: showPowerProfile.checked
-    property alias cfg_showCamera: showCamera.checked
-    property alias cfg_showScreenShare: showScreenShare.checked
     property alias cfg_showSnapshot: showSnapshot.checked
 
     // the players followed, by the names they give themselves; none: the one playing
@@ -118,15 +114,6 @@ KCM.SimpleKCM {
             id: alwaysShowTitle
             text: i18n("Always show the title, not only on hover")
         }
-        QQC2.SpinBox {
-            id: titleWidth
-            Kirigami.FormData.label: i18n("Title width:")
-            from: 80
-            to: 600
-            stepSize: 10
-            textFromValue: value => i18n("%1 px", value)
-            valueFromText: text => parseInt(text)
-        }
 
         QQC2.CheckBox {
             id: tintFromCover
@@ -153,18 +140,6 @@ KCM.SimpleKCM {
         QQC2.CheckBox {
             id: showTransfers
             text: i18n("Copies and downloads in progress")
-        }
-        QQC2.CheckBox {
-            id: showMicrophone
-            text: i18n("A dot while a microphone records")
-        }
-        QQC2.CheckBox {
-            id: showCamera
-            text: i18n("A dot while a camera is in use")
-        }
-        QQC2.CheckBox {
-            id: showScreenShare
-            text: i18n("A dot while the screen is shared or recorded")
         }
         QQC2.CheckBox {
             id: showBluetooth

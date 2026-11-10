@@ -9,7 +9,8 @@ import "../code/sensors.js" as Sensors
 // What else the island shows, besides music: a passing
 // event (the charger, headphones, the power profile) takes the pill for a moment, and lasting
 // ones (transfers, a microphone, a camera, a shared screen, a snapshot) sit beside the music.
-// Each can be turned off. Volume and brightness are left to Plasma's own pop-ups.
+// The microphone, the camera and the screen are always told, and by whom; the others can be
+// turned off. Volume and brightness are left to Plasma's own pop-ups.
 //
 // These come from Plasma's own modules, some of them private: a new Plasma may move them.
 QtObject {
@@ -21,27 +22,42 @@ QtObject {
 
     readonly property int jobs: Plasmoid.configuration.showTransfers ? jobsModel.activeJobsCount : 0
     readonly property real jobsProgress: jobsModel.jobsPercentage / 100
-    readonly property bool microphone: Plasmoid.configuration.showMicrophone && recordingStreams > 0
-    property int recordingStreams: 0
-    readonly property bool camera: Plasmoid.configuration.showCamera && sensorsNow.camera
-    readonly property bool screen: Plasmoid.configuration.showScreenShare && sensorsNow.screen
+    // the apps recording from a microphone, one entry per stream
+    property var recordingApps: []
     readonly property bool snapshot: Plasmoid.configuration.showSnapshot && startedFromSnapshot
-    readonly property bool busy: jobs > 0 || dots.length > 0
+    readonly property bool busy: jobs > 0 || inUse.length > 0 || snapshot
 
-    // the lasting ones, each a colored dot in Mocha
-    readonly property var dots: {
+    function names(apps) {
+        return Array.from(new Set(apps.filter(x => x))).join(", ");
+    }
+
+    // what is being used: its sign in Mocha, and a sentence that says who
+    readonly property var inUse: {
         const list = [];
-        if (microphone) {
-            list.push({ color: Catppuccin.MOCHA.peach, icon: "audio-input-microphone" });
+        if (recordingApps.length > 0) {
+            const who = names(recordingApps);
+            list.push({
+                color: Catppuccin.MOCHA.peach,
+                icon: "audio-input-microphone-symbolic",
+                label: who ? i18n("%1 is using the microphone", who) : i18n("The microphone is in use"),
+            });
         }
-        if (camera) {
-            list.push({ color: Catppuccin.MOCHA.green, icon: "camera-web-symbolic" });
+        if (sensorsNow.camera) {
+            const who = names(sensorsNow.cameraBy);
+            list.push({
+                color: Catppuccin.MOCHA.green,
+                icon: "camera-web-symbolic",
+                label: who ? i18n("%1 is using the camera", who) : i18n("The camera is in use"),
+            });
         }
-        if (screen) {
-            list.push({ color: Catppuccin.MOCHA.mauve, icon: "video-display-symbolic" });
-        }
-        if (snapshot) {
-            list.push({ color: Catppuccin.MOCHA.yellow, icon: "drive-harddisk-symbolic" });
+        if (sensorsNow.screen) {
+            const who = names(sensorsNow.screenBy);
+            list.push({
+                color: Catppuccin.MOCHA.mauve,
+                icon: "video-display-symbolic",
+                fallback: "monitor-symbolic",
+                label: who ? i18n("%1 is sharing the screen", who) : i18n("The screen is being shared"),
+            });
         }
         return list;
     }
@@ -138,12 +154,12 @@ QtObject {
 
     // --- a camera or the screen in use --------------------------------------------------------
 
-    property var sensorsNow: ({ camera: false, screen: false })
+    property var sensorsNow: ({ camera: false, screen: false, cameraBy: [], screenBy: [] })
 
     property Plasma5Support.DataSource sensors: Plasma5Support.DataSource {
         engine: "executable"
         interval: 3000
-        connectedSources: Plasmoid.configuration.showCamera || Plasmoid.configuration.showScreenShare ? [Sensors.SENSORS_COMMAND] : []
+        connectedSources: [Sensors.SENSORS_COMMAND]
         onNewData: (source, data) => activities.sensorsNow = Sensors.read(data.stdout)
     }
 
@@ -178,18 +194,32 @@ QtObject {
     // --- the microphone, while an app records -------------------------------------------------
 
     property Instantiator recording: Instantiator {
-        model: Plasmoid.configuration.showMicrophone ? activities.recordingModel : null
+        model: activities.recordingModel
         delegate: QtObject {
             required property var model
+            readonly property var props: model.PulseObject?.properties ?? {}
+            readonly property string binary: props["application.process.binary"] ?? ""
+            readonly property string app: props["application.name"] ?? binary
             // not a level meter, like the one of Plasma's own volume popup
-            readonly property bool recording: {
-                const props = model.PulseObject?.properties ?? {};
-                const binary = props["application.process.binary"] ?? "";
-                return !(props["media.name"] ?? "").includes("Peak detect")
-                    && !["plasmashell", "pavucontrol", "pavucontrol-qt", "kded6", "kmix"].includes(binary);
+            readonly property bool recording: !(props["media.name"] ?? "").includes("Peak detect")
+                && !["plasmashell", "pavucontrol", "pavucontrol-qt", "kded6", "kmix"].includes(binary)
+            // the name it was counted under, whatever its properties become
+            property string counted
+            property bool isCounted: false
+            Component.onCompleted: {
+                if (recording) {
+                    counted = app;
+                    isCounted = true;
+                    activities.recordingApps = activities.recordingApps.concat([counted]);
+                }
             }
-            Component.onCompleted: if (recording) activities.recordingStreams++
-            Component.onDestruction: if (recording) activities.recordingStreams--
+            Component.onDestruction: {
+                if (isCounted) {
+                    const apps = activities.recordingApps.slice();
+                    apps.splice(apps.indexOf(counted), 1);
+                    activities.recordingApps = apps;
+                }
+            }
         }
     }
 
