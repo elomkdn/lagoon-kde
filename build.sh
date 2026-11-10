@@ -3,7 +3,7 @@
 # Teal), avec des rayons d'angle communs à Plasma, Qt et GTK.
 #
 # Installe dans ~/.local/share, ou dans $DEST si défini (ex. : DEST=dist/share ./build.sh).
-# Nécessite librsvg et python3.
+# Nécessite librsvg et python3, sans module à installer.
 set -euo pipefail
 
 HERE=$(dirname "$(realpath "$0")")
@@ -110,24 +110,10 @@ cat > "$WAVES/metadata.json" <<EOF
 }
 EOF
 
-# --- Second fond d'écran, « Glow » : un arc de lumière teal à travers du verre cannelé ---
-GLOW=$DATA/wallpapers/Lagoon-Glow
-rm -rf "$GLOW"
-mkdir -p "$GLOW/contents/images"
-for size in $SIZES; do
-  python3 -I "$HERE/wallpaper/make-glow.py" "$GLOW/contents/images/$size.png" "${size%x*}" "${size#*x}"
-done
-python3 -I "$HERE/wallpaper/make-glow.py" "$GLOW/contents/screenshot.png" 400 250
-cat > "$GLOW/metadata.json" <<EOF
-{
-    "KPlugin": {
-        "Authors": [ { "Name": "Elom" } ],
-        "Id": "Lagoon-Glow",
-        "License": "GPL-3.0-or-later",
-        "Name": "Lagoon Glow"
-    }
-}
-EOF
+# --- Konsole : le jeu de couleurs Mocha du terminal et un profil qui le prend (install.sh n'en
+# fait le profil par défaut que si l'utilisateur n'en a pas choisi un) ---
+mkdir -p "$DATA/konsole"
+cp "$HERE/konsole/Lagoon.colorscheme" "$HERE/konsole/Lagoon.profile" "$DATA/konsole/"
 
 # --- Jeu de couleurs ---
 mkdir -p "$(dirname "$COLORS")"
