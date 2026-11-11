@@ -262,6 +262,22 @@ setup_kvantum() {
   rm -rf "${DATA:?}/themes/$THEME-KIO"
 }
 step "Setting up the Qt style (Kvantum)" setup_kvantum
+
+setup_qt_plugin() {
+  # KIO's Places panel writes its selection in light text, unreadable on the accent, unless a
+  # small Qt plugin steps in. Plasma reads this folder when it starts: from the next session on.
+  local dir=$DATA/themes/$THEME/qt6 script=$CONFIG/plasma-workspace/env/lagoon-qt.sh
+  if [ -f "$dir/generic/liblagoonplaces.so" ] && ! ldd "$dir/generic/liblagoonplaces.so" 2>&1 | grep -q 'not found'; then
+    mkdir -p "$(dirname "$script")"
+    {
+      printf 'export QT_PLUGIN_PATH="%s${QT_PLUGIN_PATH:+:$QT_PLUGIN_PATH}"\n' "$dir"
+      printf 'export QT_QPA_GENERIC_PLUGINS="lagoonplaces${QT_QPA_GENERIC_PLUGINS:+,$QT_QPA_GENERIC_PLUGINS}"\n'
+    } > "$script"
+  else
+    rm -f "$script"
+  fi
+}
+step "Keeping the Places panel readable" setup_qt_plugin
 kvantum_ok=true
 if ! ls /usr/lib*/qt6/plugins/styles/libkvantum.so >/dev/null 2>&1; then
   kvantum_ok=false

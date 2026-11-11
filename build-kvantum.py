@@ -54,9 +54,8 @@ FOCUS_RING = mix(BASE, TEAL, 0.5)         # anneau de focus, comme l'accent à 5
 # Sélections des listes, texte sombre (crust) comme dans GTK et Kirigami :
 # - avec ou sans focus : l'accent lui-même (12,6:1 avec le texte). Les dossiers Teal, de la même
 #   couleur, s'en détachent par leur ombre (teal-icons, add_folder_shadow). Le panneau
-#   Emplacements de KIO (Dolphin, boîtes de dialogue de fichiers des applis KDE) écrit en texte
-#   clair tant qu'il n'a pas le focus, quel que soit le style : son libellé sélectionné se lit
-#   mal, le prix d'une seule teinte partout ;
+#   Emplacements de KIO écrit en texte clair tant qu'il n'a pas le focus, quel que soit le
+#   style : le plugin qt-module/ le fait écrire en sombre ;
 # - fenêtre inactive : un teal adouci (contraste 5,7:1).
 SELECTION = TEAL
 SELECTION_INACTIVE = mix(TEAL, BASE, 0.4)

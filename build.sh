@@ -4,7 +4,8 @@
 #
 # Installe dans ~/.local/share, ou dans $DEST si défini (ex. : DEST=dist/share ./build.sh).
 # Nécessite librsvg et python3, sans module à installer. Avec un compilateur C et les en-têtes
-# de GTK 3, les boutons de fenêtre des applis GTK 3 s'allument ensemble ; sans, un par un.
+# de GTK 3, les boutons de fenêtre des applis GTK 3 s'allument ensemble ; sans, un par un. Avec
+# un compilateur C++ et ceux de Qt 6, le panneau Emplacements de KIO garde un texte lisible.
 set -euo pipefail
 
 HERE=$(dirname "$(realpath "$0")")
@@ -56,6 +57,20 @@ if command -v cc >/dev/null && pkg-config --exists gtk+-3.0 2>/dev/null; then
     "$HERE/gtk3-module/lagoonbuttons.c" $(pkg-config --cflags --libs gtk+-3.0)
 else
   echo "Pas de compilateur C ou d'en-têtes GTK 3 : les boutons des applis GTK 3 réagiront un par un" >&2
+fi
+# --- Plugin Qt 6 (optionnel) : le texte de la sélection du panneau Emplacements, voir qt-module/ ---
+if command -v c++ >/dev/null && pkg-config --exists Qt6Widgets 2>/dev/null; then
+  qt_build=$(mktemp -d)
+  # shellcheck disable=SC2046  # les options de pkg-config sont à découper
+  "$(pkg-config --variable=libexecdir Qt6Core)/moc" $(pkg-config --cflags-only-I Qt6Widgets Qt6Gui Qt6Core) \
+    -I"$HERE/qt-module" "$HERE/qt-module/lagoonplaces.cpp" -o "$qt_build/lagoonplaces.moc"
+  mkdir -p "$DATA/themes/Lagoon/qt6/generic"
+  # shellcheck disable=SC2046
+  c++ -std=c++17 -shared -fPIC -O2 -Wall -I"$qt_build" -o "$DATA/themes/Lagoon/qt6/generic/liblagoonplaces.so" \
+    "$HERE/qt-module/lagoonplaces.cpp" $(pkg-config --cflags --libs Qt6Widgets Qt6Gui Qt6Core)
+  rm -rf "$qt_build"
+else
+  echo "Pas de compilateur C++ ou d'en-têtes Qt 6 : le panneau Emplacements gardera un texte clair" >&2
 fi
 # --- Style d'applications Kvantum (optionnel) : KvLibadwaita Dark (le style des applis GNOME)
 # aux couleurs et rayons du thème ; menus et infobulles translucides et floutés. Kvantum
