@@ -14,9 +14,8 @@ l'accent teal et aux rayons du thème GTK (9 px).
   ouverture qu'avec la translucidité des fenêtres (translucent_windows, blurring) : sans elle,
   popup_blurring seul n'applique pas le flou, sous Wayland, et les menus laissent voir net ce
   qu'il y a derrière ;
-- sélections des listes : l'accent teal et un texte sombre, comme dans GTK, Kirigami et le jeu
-  de couleurs Catppuccin ; un teal moyen pour les listes sans focus, à cause du panneau
-  Emplacements de KIO (voir SELECTION) ;
+- sélections des listes : l'accent teal et un texte sombre, avec ou sans focus, comme dans
+  GTK, Kirigami et le jeu de couleurs Catppuccin (voir SELECTION) ;
 - curseurs et barres de progression : les épaisseurs de libadwaita (4 et 8 px), comme GTK ;
 - poignée des curseurs : un disque plein en text, comme celles de GTK et de Plasma (l'anneau
   teal de KvLibadwaita était la seule de son espèce) ;
@@ -53,16 +52,13 @@ HOVER = mix(BASE, SURFACE0, 0.8)          # ligne survolée
 TEAL_HOVER = mix(TEAL, TEXT, 0.25)        # accent survolé, un peu plus clair
 FOCUS_RING = mix(BASE, TEAL, 0.5)         # anneau de focus, comme l'accent à 50 % de GTK
 # Sélections des listes, texte sombre (crust) comme dans GTK et Kirigami :
-# - vue qui a le focus : l'accent lui-même (12,6:1 avec le texte), la sélection de GTK, de
-#   Kirigami et de Plasma. Les dossiers Teal, de la même couleur, s'en détachent par leur ombre
-#   (teal-icons, add_folder_shadow) ;
-# - fenêtre inactive : un teal adouci (contraste 5,7:1) ;
-# - sans focus : un teal moyen. Le panneau Emplacements de KIO (Dolphin, toutes les boîtes de
-#   dialogue de fichiers des applis KDE) dessine sa sélection sans dire à Kvantum si la fenêtre
-#   est active, puis y écrit en texte clair : ce teal reste lisible en texte sombre (4,5:1)
-#   comme en texte clair (2,9:1).
-SELECTION = "#2e8a7d"
-SELECTION_FOCUS = TEAL
+# - avec ou sans focus : l'accent lui-même (12,6:1 avec le texte). Les dossiers Teal, de la même
+#   couleur, s'en détachent par leur ombre (teal-icons, add_folder_shadow). Le panneau
+#   Emplacements de KIO (Dolphin, boîtes de dialogue de fichiers des applis KDE) écrit en texte
+#   clair tant qu'il n'a pas le focus, quel que soit le style : son libellé sélectionné se lit
+#   mal, le prix d'une seule teinte partout ;
+# - fenêtre inactive : un teal adouci (contraste 5,7:1).
+SELECTION = TEAL
 SELECTION_INACTIVE = mix(TEAL, BASE, 0.4)
 INACTIVE_ACCENT = mix(OVERLAY1, TEAL, 0.25)  # l'accent éteint des fenêtres inactives
 FOCUS_FRAMES = ("button", "combo", "tab")   # les contrôles entourés d'un anneau de focus
@@ -97,7 +93,7 @@ SCOPED = {
     r"^(menu-)?(checkbox|radio)": {"#1d1d20": BASE},       # intérieur des cases
     r"^tooltip-normal": {"#000006": POPUP},
     r"^itemview-toggled": {"#4b4b4b": SELECTION},
-    r"^itemview-pressed": {"#616161": SELECTION_FOCUS},
+    r"^itemview-pressed": {"#616161": SELECTION},
     r"^slidercursor": {"#3584e4": TEXT, "#2c2c2c": TEXT},  # poignée pleine (anneau et centre)
     r"^slidercursor(-tickless)?-disabled": {TEXT: OVERLAY0},  # désactivée, elle s'efface
     r"^(checkbox|radio)-focused": {"#4b4b4b": SURFACE2},   # survolé : bord plus clair qu'au repos
@@ -250,10 +246,10 @@ def build_svg(text):
     # 2. sélection inactive : copie de la sélection, adoucie ; de même pour la vue qui garde le
     #    focus dans une fenêtre inactive (sans pièce -inactive, Kvantum y laisserait l'accent plein)
     for eid, e in list(ids.items()):
-        for state, color in (("toggled", SELECTION), ("pressed", SELECTION_FOCUS)):
+        for state in ("toggled", "pressed"):
             if re.match(rf"^itemview-{state}{PARTS}$", eid):
                 parents[e].append(renamed(e, eid.replace(f"itemview-{state}", f"itemview-{state}-inactive"),
-                                          {color: SELECTION_INACTIVE},
+                                          {SELECTION: SELECTION_INACTIVE},
                                           (f"itemview-{state}", f"itemview-{state}-inactive")))
 
     # bouton par défaut des dialogues (OK, Enregistrer…) : Kvantum pose « button-default »
