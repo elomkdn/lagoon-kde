@@ -1,0 +1,13 @@
+{
+    "KPackageStructure": "Plasma/LookAndFeel",
+    "KPlugin": {
+        "Authors": [ { "Name": "Elom" } ],
+        "Category": "Global Themes",
+        "Description": "Catppuccin Mocha with the Teal accent, for CachyOS",
+        "EnabledByDefault": true,
+        "Id": "Lagoon",
+        "License": "GPL-3.0-or-later",
+        "Name": "Lagoon"
+    },
+    "X-KPackage-Dependencies": [ ]
+}

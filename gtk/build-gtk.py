@@ -23,7 +23,7 @@ sélecteurs, relevés dans leurs feuilles de style : même spécificité, et les
 après. Les applis libadwaita ignorent le thème GTK : elles lisent gtk-4.0/lagoon.css par
 ~/.config/gtk-4.0/gtk.css (install.sh), où ses règles l'emportent sur celles de libadwaita.
 
-usage : build-gtk.py <dossier d'adw-gtk3> <dossier des thèmes> <nom>
+usage : gtk/build-gtk.py <dossier d'adw-gtk3> <dossier des thèmes> <nom>
 """
 import re
 import shutil
@@ -211,7 +211,7 @@ def knob(declaration):
 
 
 def switches(child):
-    """Interrupteurs, comme ceux de Plasma (plasma-theme/widgets/switch.svgz) : la piste s'allume
+    """Interrupteurs, comme ceux de Plasma (plasma/desktoptheme/Lagoon/widgets/switch.svgz) : la piste s'allume
     en teal, et le bouton reste sombre (crust) dans tous les états, comme les coches et le texte
     posés sur l'accent. Un bouton clair sur le teal, presque de la même luminosité, demandait un
     liseré pour s'en détacher. child : « > » en GTK 4, rien en GTK 3."""
@@ -298,7 +298,7 @@ def gtk3_css(adw):
     for button, color in WINDOW_BUTTONS.items():
         out.append(rule([c.format(f".{button}:backdrop:hover") for c in contexts],
                         f"background-color: {color}", f"color: {BASE}"))
-    # tous ensemble au survol : le module gtk3-module/ marque leur boîte tant que le
+    # tous ensemble au survol : le module gtk/lagoonbuttons.c marque leur boîte tant que le
     # pointeur y est ; sans lui, les règles ci-dessus les font réagir un par un
     group = (".titlebar .lagoon-hover button.titlebutton{}:not(.appmenu)", "headerbar .lagoon-hover button.titlebutton{}:not(.appmenu)")
     for button, color in WINDOW_BUTTONS.items():

@@ -23,7 +23,7 @@ expect() { # description, commande… : la commande doit réussir
 cd "$HERE"
 echo "Scripts"
 for f in *.sh tools/*.sh; do bash -n "$f" || bad "$f"; done
-expect "ils se lisent" python3 -I -m py_compile build-*.py wallpaper/*.py tools/*.py
+expect "ils se lisent" python3 -I -m py_compile gtk/*.py kvantum/*.py plasma/desktoptheme/*.py wallpapers/*.py tools/*.py
 
 echo "Construction"
 if DEST="$WORK/rel/share" ./build.sh > "$WORK/build.log" 2>&1; then ok "le thème se construit"; else cat "$WORK/build.log" >&2; bad "la construction"; fi

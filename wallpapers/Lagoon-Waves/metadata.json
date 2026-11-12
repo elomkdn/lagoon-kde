@@ -1,0 +1,8 @@
+{
+    "KPlugin": {
+        "Authors": [ { "Name": "Elom" } ],
+        "Id": "Lagoon-Waves",
+        "License": "GPL-3.0-or-later",
+        "Name": "Lagoon Waves"
+    }
+}

@@ -1,0 +1,13 @@
+{
+    "KPackageStructure": "Plasma/Theme",
+    "KPlugin": {
+        "Authors": [ { "Name": "Elom" } ],
+        "Category": "Plasma Theme",
+        "Description": "Plasma theme in Catppuccin Mocha with the Teal accent",
+        "EnabledByDefault": true,
+        "Id": "Lagoon",
+        "License": "GPL-3.0-or-later",
+        "Name": "Lagoon"
+    },
+    "X-Plasma-API-Minimum-Version": "6.0"
+}

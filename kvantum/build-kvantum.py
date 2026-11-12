@@ -23,7 +23,7 @@ l'accent teal et aux rayons du thème GTK (9 px).
   taille du cadre (frame.*) : le cadre donne le rayon. L'anneau de focus des champs, lui,
   grossirait avec : il est redessiné pour garder 2 px.
 
-usage : build-kvantum.py <dossier KvLibadwaita> <dossier de sortie> <nom>
+usage : kvantum/build-kvantum.py <dossier KvLibadwaita> <dossier de sortie> <nom>
 """
 import copy
 import re
@@ -46,7 +46,7 @@ def mix(a, b, t):
 
 
 POPUP = BASE                              # comme les popups de Plasma : la base Mocha
-POPUP_ALPHA = 0.75                        # et la même opacité (build-translucent.py)
+POPUP_ALPHA = 0.75                        # et la même opacité (plasma/desktoptheme/build-translucent.py)
 FIELD = mix(BASE, SURFACE0, 0.75)         # champs : un cran au-dessus de la fenêtre
 HOVER = mix(BASE, SURFACE0, 0.8)          # ligne survolée
 TEAL_HOVER = mix(TEAL, TEXT, 0.25)        # accent survolé, un peu plus clair
@@ -55,7 +55,7 @@ FOCUS_RING = mix(BASE, TEAL, 0.5)         # anneau de focus, comme l'accent à 5
 # - avec ou sans focus : l'accent lui-même (12,6:1 avec le texte). Les dossiers Teal, de la même
 #   couleur, s'en détachent par leur ombre (teal-icons, add_folder_shadow). Le panneau
 #   Emplacements de KIO écrit en texte clair tant qu'il n'a pas le focus, quel que soit le
-#   style : le plugin qt-module/ le fait écrire en sombre ;
+#   style : le plugin qt/ le fait écrire en sombre ;
 # - fenêtre inactive : un teal adouci (contraste 5,7:1).
 SELECTION = TEAL
 SELECTION_INACTIVE = mix(TEAL, BASE, 0.4)

@@ -2,7 +2,7 @@
 """Variantes translucides des cadres du thème Plasma (panneaux, popups, infobulles).
 
 Plasma prend `translucent/<image>` quand KWin peut flouter derrière, `solid/<image>` pour un
-panneau opaque et ses popups, et l'image elle-même sinon : les SVG de plasma-theme/ restent
+panneau opaque et ses popups, et l'image elle-même sinon : les SVG de Lagoon/ restent
 opaques, et ce script en tire les deux variantes.
 
 Le flou de KWin suit une région en pixels entiers, tirée des pièces mask-* de l'image
@@ -19,7 +19,7 @@ rallume des points clairs le long de l'arrondi. Pas de liseré.
 Les coins sont alignés sur les pixels à l'échelle 1 ; à une autre échelle, le masque reste
 dans l'arrondi, plus en retrait.
 
-usage : build-translucent.py plasma-theme/ dossier-du-thème-installé/
+usage : plasma/desktoptheme/build-translucent.py plasma/desktoptheme/Lagoon/ dossier-du-thème-installé/
 """
 import gzip
 import re

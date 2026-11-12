@@ -16,58 +16,36 @@ LNF=$DATA/plasma/look-and-feel/Lagoon
 PLASMA=$DATA/plasma/desktoptheme/Lagoon
 COLORS=$DATA/color-schemes/Lagoon.colors
 
-# --- Thème Plasma (plasma-theme/ : panneaux, popups et widgets) ---
+# --- Thème Plasma (plasma/desktoptheme/Lagoon : panneaux, popups et widgets) ---
 rm -rf "$PLASMA"
 mkdir -p "$(dirname "$PLASMA")"
-cp -r "$HERE/plasma-theme" "$PLASMA"
-cat > "$PLASMA/metadata.json" <<EOF
-{
-    "KPackageStructure": "Plasma/Theme",
-    "KPlugin": {
-        "Authors": [ { "Name": "Elom" } ],
-        "Category": "Plasma Theme",
-        "Description": "Plasma theme in Catppuccin Mocha with the Teal accent",
-        "EnabledByDefault": true,
-        "Id": "Lagoon",
-        "License": "GPL-3.0-or-later",
-        "Name": "Lagoon"
-    },
-    "X-Plasma-API-Minimum-Version": "6.0"
-}
-EOF
+cp -r "$HERE/plasma/desktoptheme/Lagoon" "$PLASMA"
 
 # Panneaux, popups et infobulles translucides et floutés quand KWin floute (translucent/),
 # opaques sinon ; solid/ pour les panneaux réglés opaques et leurs popups
-python3 -I "$HERE/build-translucent.py" "$HERE/plasma-theme" "$PLASMA"
-cat > "$PLASMA/plasmarc" <<'EOF'
-[Wallpaper]
-defaultWallpaperTheme=Lagoon
-defaultFileSuffix=.png
-defaultWidth=1920
-defaultHeight=1080
-EOF
+python3 -I "$HERE/plasma/desktoptheme/build-translucent.py" "$HERE/plasma/desktoptheme/Lagoon" "$PLASMA"
 
 # --- Thème GTK : le style de libadwaita (adw-gtk3) aux couleurs de Catppuccin Mocha, accent teal ;
 # les applis libadwaita lisent la même palette (gtk-4.0/lagoon.css, voir install.sh) ---
-python3 -I "$HERE/build-gtk.py" "$HERE/vendor/adw-gtk3" "$DATA/themes" Lagoon
-# --- Module GTK 3 (optionnel) : les boutons de fenêtre s'allument ensemble, voir gtk3-module/ ---
+python3 -I "$HERE/gtk/build-gtk.py" "$HERE/vendor/adw-gtk3" "$DATA/themes" Lagoon
+# --- Module GTK 3 (optionnel) : les boutons de fenêtre s'allument ensemble, voir gtk/lagoonbuttons.c ---
 if command -v cc >/dev/null && pkg-config --exists gtk+-3.0 2>/dev/null; then
   # shellcheck disable=SC2046  # les options de pkg-config sont à découper
   cc -shared -fPIC -O2 -Wall -o "$DATA/themes/Lagoon/gtk-3.0/liblagoonbuttons.so" \
-    "$HERE/gtk3-module/lagoonbuttons.c" $(pkg-config --cflags --libs gtk+-3.0)
+    "$HERE/gtk/lagoonbuttons.c" $(pkg-config --cflags --libs gtk+-3.0)
 else
   echo "Pas de compilateur C ou d'en-têtes GTK 3 : les boutons des applis GTK 3 réagiront un par un" >&2
 fi
-# --- Plugin Qt 6 (optionnel) : le texte de la sélection du panneau Emplacements, voir qt-module/ ---
+# --- Plugin Qt 6 (optionnel) : le texte de la sélection du panneau Emplacements, voir qt/ ---
 if command -v c++ >/dev/null && pkg-config --exists Qt6Widgets 2>/dev/null; then
   qt_build=$(mktemp -d)
   # shellcheck disable=SC2046  # les options de pkg-config sont à découper
   "$(pkg-config --variable=libexecdir Qt6Core)/moc" $(pkg-config --cflags-only-I Qt6Widgets Qt6Gui Qt6Core) \
-    -I"$HERE/qt-module" "$HERE/qt-module/lagoonplaces.cpp" -o "$qt_build/lagoonplaces.moc"
+    -I"$HERE/qt" "$HERE/qt/lagoonplaces.cpp" -o "$qt_build/lagoonplaces.moc"
   mkdir -p "$DATA/themes/Lagoon/qt6/generic"
   # shellcheck disable=SC2046
   c++ -std=c++17 -shared -fPIC -O2 -Wall -I"$qt_build" -o "$DATA/themes/Lagoon/qt6/generic/liblagoonplaces.so" \
-    "$HERE/qt-module/lagoonplaces.cpp" $(pkg-config --cflags --libs Qt6Widgets Qt6Gui Qt6Core)
+    "$HERE/qt/lagoonplaces.cpp" $(pkg-config --cflags --libs Qt6Widgets Qt6Gui Qt6Core)
   rm -rf "$qt_build"
 else
   echo "Pas de compilateur C++ ou d'en-têtes Qt 6 : le panneau Emplacements gardera un texte clair" >&2
@@ -75,7 +53,7 @@ fi
 # --- Style d'applications Kvantum (optionnel) : KvLibadwaita Dark (le style des applis GNOME)
 # aux couleurs et rayons du thème ; menus et infobulles translucides et floutés. Kvantum
 # cherche aussi ses thèmes dans le dossier des thèmes GTK.
-python3 -I "$HERE/build-kvantum.py" "$HERE/vendor/kvlibadwaita" \
+python3 -I "$HERE/kvantum/build-kvantum.py" "$HERE/vendor/kvlibadwaita" \
   "$DATA/themes/Lagoon/Kvantum" Lagoon
 
 
@@ -86,7 +64,7 @@ python3 -I -c 'import sys, zipfile; zipfile.ZipFile(sys.argv[1]).extractall(sys.
 
 # --- Icône du lanceur : le logo CachyOS sans tuile, dans hicolor pour rester là avec --no-icons ---
 mkdir -p "$DATA/icons/hicolor/scalable/apps"
-python3 -I "$HERE/wallpaper/make-wallpaper.py" "$HERE/wallpaper/cachyos-logo.svg" \
+python3 -I "$HERE/wallpapers/make-wallpaper.py" "$HERE/wallpapers/cachyos-logo.svg" \
   "$DATA/icons/hicolor/scalable/apps/lagoon-launcher.svg" --logo-only
 
 # --- Fond d'écran : vagues et logo CachyOS aux couleurs Mocha (paquet de fond d'écran Plasma) ---
@@ -95,44 +73,26 @@ SIZES="3840x2160 2560x1600 2560x1440 1920x1200 1920x1080 3440x1440 1366x768"
 WP=$DATA/wallpapers/Lagoon
 rm -rf "$WP"
 mkdir -p "$WP/contents/images"
+cp "$HERE/wallpapers/Lagoon/metadata.json" "$WP/"
 for size in $SIZES; do
-  python3 -I "$HERE/wallpaper/make-wallpaper.py" "$HERE/wallpaper/cachyos-logo.svg" \
+  python3 -I "$HERE/wallpapers/make-wallpaper.py" "$HERE/wallpapers/cachyos-logo.svg" \
     "$WP/contents/images/$size.png" "${size%x*}" "${size#*x}"
 done
-python3 -I "$HERE/wallpaper/make-wallpaper.py" "$HERE/wallpaper/cachyos-logo.svg" \
+python3 -I "$HERE/wallpapers/make-wallpaper.py" "$HERE/wallpapers/cachyos-logo.svg" \
   "$WP/contents/screenshot.png" 400 250
-cat > "$WP/metadata.json" <<EOF
-{
-    "KPlugin": {
-        "Authors": [ { "Name": "Elom" } ],
-        "Id": "Lagoon",
-        "License": "GPL-1.0-only",
-        "Name": "Lagoon"
-    }
-}
-EOF
 
 # --- Le même sans le logo, « Waves » : pour l'écran de verrouillage, qui le floute derrière
 # l'avatar et le mot de passe ---
 WAVES=$DATA/wallpapers/Lagoon-Waves
 rm -rf "$WAVES"
 mkdir -p "$WAVES/contents/images"
+cp "$HERE/wallpapers/Lagoon-Waves/metadata.json" "$WAVES/"
 for size in $SIZES; do
-  python3 -I "$HERE/wallpaper/make-wallpaper.py" "$HERE/wallpaper/cachyos-logo.svg" \
+  python3 -I "$HERE/wallpapers/make-wallpaper.py" "$HERE/wallpapers/cachyos-logo.svg" \
     "$WAVES/contents/images/$size.png" "${size%x*}" "${size#*x}" --no-logo
 done
-python3 -I "$HERE/wallpaper/make-wallpaper.py" "$HERE/wallpaper/cachyos-logo.svg" \
+python3 -I "$HERE/wallpapers/make-wallpaper.py" "$HERE/wallpapers/cachyos-logo.svg" \
   "$WAVES/contents/screenshot.png" 400 250 --no-logo
-cat > "$WAVES/metadata.json" <<EOF
-{
-    "KPlugin": {
-        "Authors": [ { "Name": "Elom" } ],
-        "Id": "Lagoon-Waves",
-        "License": "GPL-3.0-or-later",
-        "Name": "Lagoon Waves"
-    }
-}
-EOF
 
 # --- Konsole : le jeu de couleurs Mocha du terminal et un profil qui le prend (install.sh n'en
 # fait le profil par défaut que si l'utilisateur n'en a pas choisi un) ---
@@ -149,45 +109,42 @@ rm -rf "$DATA/aurorae/themes/CatppuccinMocha-Classic"
 cp -r "$SRC_CATPPUCCIN/CatppuccinMocha-Classic" "$DATA/aurorae/themes/"
 
 # --- Thème global ---
+# plasma/look-and-feel/Lagoon : ses métadonnées, ses réglages (defaults), le splash et les aperçus ;
+# s'y ajoutent ici les images du splash et la disposition
 rm -rf "$LNF"
 mkdir -p "$(dirname "$LNF")"
+cp -r "$HERE/plasma/look-and-feel/Lagoon" "$LNF"
 c=$LNF/contents
 # pas d'écran de verrouillage, de déconnexion ni d'OSD propres : Plasma utilise les siens,
 # maintenus et qui suivent le jeu de couleurs
 mkdir -p "$c/layouts"
 # splash (d'après celui de MacTahoe, GPL-3.0) : le fond d'écran, avec le logo CachyOS
 # à la même place ; ses trois bulles, animées en QML, s'échappent du C pendant le chargement
-rm -rf "$c/splash"
-cp -r "$HERE/splash" "$c/splash"
 mkdir -p "$c/splash/images"
 # fond du splash : le fond d'écran sans logo, dans les mêmes tailles, pour que les vagues
 # coïncident aussi avec le bureau quel que soit le format de l'écran
 for size in $SIZES; do
-  python3 -I "$HERE/wallpaper/make-wallpaper.py" "$HERE/wallpaper/cachyos-logo.svg" \
+  python3 -I "$HERE/wallpapers/make-wallpaper.py" "$HERE/wallpapers/cachyos-logo.svg" \
     "$c/splash/images/background-$size.png" "${size%x*}" "${size#*x}" --no-logo
 done
 sizes_js=$(printf '"%s", ' $SIZES)
 sed -i "s|@BACKGROUND_SIZES@|[${sizes_js%, }]|" "$c/splash/Splash.qml"
-python3 -I "$HERE/wallpaper/make-wallpaper.py" "$HERE/wallpaper/cachyos-logo.svg" \
+python3 -I "$HERE/wallpapers/make-wallpaper.py" "$HERE/wallpapers/cachyos-logo.svg" \
   "$c/splash/images/logo-c.svg" --logo-only --no-bubbles
-
-# aperçus (Configuration du système) : capture du thème et instant de l'animation du splash
-rm -rf "$c/previews"
-cp -r "$HERE/previews" "$c/previews"
 
 # disposition : barre du haut et dock flottant, widgets de Plasma uniquement
 # the global theme's layout: the top bar and the dock, from their "Add Panel" templates
 {
-  echo "// Lagoon layout: the top bar and the floating dock (layout-templates/, joined by build.sh)."
+  echo "// Lagoon layout: the top bar and the floating dock (plasma/layout-templates/, joined by build.sh)."
   for t in topbar dock; do
     echo "(function () {"
-    cat "$HERE/layout-templates/com.github.elomkdn.lagoon.$t/contents/layout.js"
+    cat "$HERE/plasma/layout-templates/com.github.elomkdn.lagoon.$t/contents/layout.js"
     echo "})();"
   done
 } > "$c/layouts/org.kde.plasma.desktop-layout.js"
 # les mêmes, en modèles de panneaux (« Ajouter un panneau »), sans remplacer la disposition
 mkdir -p "$DATA/plasma/layout-templates"
-for t in "$HERE"/layout-templates/*/; do
+for t in "$HERE"/plasma/layout-templates/*/; do
   rm -rf "$DATA/plasma/layout-templates/$(basename "$t")"
   cp -r "$t" "$DATA/plasma/layout-templates/"
 done
@@ -207,54 +164,7 @@ fi
 # Lagoon Title: the active app's name, before the global menu
 TITLE=$DATA/plasma/plasmoids/com.github.elomkdn.lagoon.title
 rm -rf "$TITLE"
-cp -r "$HERE/title" "$TITLE"
-cat > "$LNF/metadata.json" <<EOF
-{
-    "KPackageStructure": "Plasma/LookAndFeel",
-    "KPlugin": {
-        "Authors": [ { "Name": "Elom" } ],
-        "Category": "Global Themes",
-        "Description": "Catppuccin Mocha with the Teal accent, for CachyOS",
-        "EnabledByDefault": true,
-        "Id": "Lagoon",
-        "License": "GPL-3.0-or-later",
-        "Name": "Lagoon"
-    },
-    "X-KPackage-Dependencies": [ ]
-}
-EOF
+cp -r "$HERE/plasma/plasmoids/com.github.elomkdn.lagoon.title" "$TITLE"
 
-cat > "$c/defaults" <<'EOF'
-[kcminputrc][Mouse]
-cursorTheme=catppuccin-mocha-teal-cursors
-
-[kdeglobals][General]
-ColorScheme=Lagoon
-
-[kdeglobals][Icons]
-Theme=Teal
-
-[kdeglobals][KDE]
-widgetStyle=kvantum
-
-[Kvantum/kvantum.kvconfig][General]
-theme=Lagoon
-
-[kwinrc][WindowSwitcher]
-LayoutName=big_icons
-
-[kwinrc][DesktopSwitcher]
-LayoutName=big_icons
-
-[kwinrc][org.kde.kdecoration2]
-library=org.kde.kwin.aurorae.v2
-theme=__aurorae__svg__CatppuccinMocha-Classic
-
-[plasmarc][Theme]
-name=Lagoon
-
-[Wallpaper]
-Image=Lagoon
-EOF
 
 echo "OK : $LNF"

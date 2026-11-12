@@ -169,6 +169,27 @@ base, like Plasma's popups; windows stay opaque.
 Selections are teal with dark text, as in GTK and Kirigami apps, softer in inactive
 windows.
 
+## In this repository
+
+The folders have the names of the places they install to, in `~/.local/share`; `build.sh`
+fills them in (the translucent panels, the GTK and Kvantum themes, the wallpapers in every size,
+the splash's backgrounds) and `install.sh` puts them in place.
+
+```
+plasma/desktoptheme/Lagoon     the Plasma theme; build-translucent.py beside it
+plasma/look-and-feel/Lagoon    the global theme: settings, splash, previews
+plasma/layout-templates        the top bar and the dock
+plasma/plasmoids               Lagoon Title
+gtk/                           the GTK theme's builder, and the GTK 3 module for the window buttons
+kvantum/                       the Kvantum style's builder
+qt/                            the Qt plugin for the Places panel
+konsole/                       the terminal's colors and profile
+wallpapers/                    the wallpaper's drawing, and its two packages
+extras/                        Firefox and Klassy
+vendor/                        the works Lagoon builds on (see CREDITS.md)
+tools/                         checks, release, the pictures of the README
+```
+
 ## License
 
 [GPL-3.0-or-later](LICENSE). This theme builds on the work of CachyOS, Catppuccin,
