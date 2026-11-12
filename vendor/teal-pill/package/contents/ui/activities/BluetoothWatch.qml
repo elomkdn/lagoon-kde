@@ -17,7 +17,7 @@ Instantiator {
         readonly property bool connected: model.Connected
         // Headset, Headphones and AudioVideo in Device::Type
         readonly property bool audio: [4, 5, 6].includes(model.Type)
-        readonly property string icon: model.Type === 4 ? "audio-headset-symbolic" : "audio-headphones-symbolic"
+        readonly property url icon: Qt.resolvedUrl("../../icons/" + (model.Type === 4 ? "headset" : "headphones") + ".svg")
 
         onConnectedChanged: {
             if (connected && audio) {

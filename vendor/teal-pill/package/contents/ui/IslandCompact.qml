@@ -166,7 +166,6 @@ MouseArea {
                         required property var modelData
                         Layout.rightMargin: 2
                         source: modelData.icon
-                        fallback: modelData.fallback ?? "unknown"
                         color: modelData.color
                     }
                 }
@@ -175,7 +174,7 @@ MouseArea {
                 Sign {
                     visible: activities.snapshot
                     Layout.rightMargin: 2
-                    source: "drive-harddisk-symbolic"
+                    source: Qt.resolvedUrl("../icons/snapshot.svg")
                     color: Catppuccin.MOCHA.yellow
                 }
             }
@@ -275,7 +274,7 @@ MouseArea {
                 anchors.centerIn: parent
                 width: Math.round(parent.width * 0.45)
                 height: width
-                source: "download"
+                source: Qt.resolvedUrl("../icons/download.svg")
                 isMask: true
                 color: Kirigami.Theme.textColor
             }

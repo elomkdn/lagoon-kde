@@ -31,6 +31,12 @@ QtObject {
         return Array.from(new Set(apps.filter(x => x))).join(", ");
     }
 
+    // Teal Pill's own icons (contents/icons): one drawing for every theme, solid like the
+    // system's tray icons, so the signs and the passing events look alike
+    function icon(name) {
+        return Qt.resolvedUrl("../../icons/" + name + ".svg");
+    }
+
     // what is being used: its sign in Mocha, and a sentence that says who
     readonly property var inUse: {
         const list = [];
@@ -38,7 +44,7 @@ QtObject {
             const who = names(recordingApps);
             list.push({
                 color: Catppuccin.MOCHA.peach,
-                icon: "audio-input-microphone-symbolic",
+                icon: activities.icon("microphone"),
                 label: who ? i18n("%1 is using the microphone", who) : i18n("The microphone is in use"),
             });
         }
@@ -46,7 +52,7 @@ QtObject {
             const who = names(sensorsNow.cameraBy);
             list.push({
                 color: Catppuccin.MOCHA.green,
-                icon: "camera-web-symbolic",
+                icon: activities.icon("camera"),
                 label: who ? i18n("%1 is using the camera", who) : i18n("The camera is in use"),
             });
         }
@@ -54,8 +60,7 @@ QtObject {
             const who = names(sensorsNow.screenBy);
             list.push({
                 color: Catppuccin.MOCHA.mauve,
-                icon: "video-display-symbolic",
-                fallback: "monitor-symbolic",
+                icon: activities.icon("screen"),
                 label: who ? i18n("%1 is sharing the screen", who) : i18n("The screen is being shared"),
             });
         }
@@ -101,7 +106,7 @@ QtObject {
             pluggedInKnown = true;
             if (!first && activities.settled && hasBattery) {
                 activities.show(pluggedIn ? "charging" : "battery",
-                                pluggedIn ? "battery-full-charging" : "battery-full", percent / 100, percent + " %");
+                                activities.icon(pluggedIn ? "battery-charging" : "battery"), percent / 100, percent + " %");
             }
         }
     }
@@ -145,9 +150,9 @@ QtObject {
                 return;
             }
             switch (profile) {
-            case "performance": activities.show("profile", "battery-profile-performance-symbolic", -1, i18n("Performance")); break;
-            case "balanced": activities.show("profile", "speedometer-symbolic", -1, i18n("Balanced")); break;
-            case "power-saver": activities.show("profile", "battery-profile-powersave-symbolic", -1, i18n("Power save")); break;
+            case "performance": activities.show("profile", activities.icon("performance"), -1, i18n("Performance")); break;
+            case "balanced": activities.show("profile", activities.icon("balanced"), -1, i18n("Balanced")); break;
+            case "power-saver": activities.show("profile", activities.icon("powersave"), -1, i18n("Power save")); break;
             }
         }
     }
@@ -169,7 +174,7 @@ QtObject {
 
     function warnOfSnapshot() {
         if (snapshot && settled) {
-            show("snapshot", "drive-harddisk-symbolic", -1, i18n("Started from a snapshot"), 6000);
+            show("snapshot", activities.icon("snapshot"), -1, i18n("Started from a snapshot"), 6000);
         }
     }
 

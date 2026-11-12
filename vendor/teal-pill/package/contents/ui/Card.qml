@@ -283,7 +283,6 @@ Item {
 
                 Sign {
                     source: modelData.icon
-                    fallback: modelData.fallback ?? "unknown"
                     color: modelData.color
                 }
                 PlasmaComponents3.Label {
