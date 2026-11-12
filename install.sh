@@ -153,6 +153,7 @@ PARTS=(
   plasma/layout-templates/com.github.elomkdn.lagoon.dock    # "Add panel" templates
   plasma/layout-templates/com.github.elomkdn.lagoon.topbar
   plasma/plasmoids/com.github.elomkdn.tealpill              # Teal Pill, the top bar's music island
+  plasma/plasmoids/com.github.elomkdn.lagoon.title          # the active app's name, in the top bar
   icons/hicolor/scalable/apps/lagoon-launcher.svg           # the launcher's icon
   konsole/Lagoon.colorscheme                                # the terminal's colors
   konsole/Lagoon.profile                                    # and a profile that takes them

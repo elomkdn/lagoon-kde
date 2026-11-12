@@ -1,0 +1,21 @@
+{
+    "KPackageStructure": "Plasma/Applet",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "elomkpadonou@gmail.com",
+                "Name": "Elom"
+            }
+        ],
+        "Category": "Windows and Tasks",
+        "Description": "The name of the active app, in the top bar",
+        "Description[fr]": "Le nom de l’app active, dans la barre du haut",
+        "Icon": "window",
+        "Id": "com.github.elomkdn.lagoon.title",
+        "License": "GPL-3.0-or-later",
+        "Name": "Lagoon Title",
+        "Name[fr]": "Titre Lagoon",
+        "Website": "https://github.com/elomkdn/lagoon-kde"
+    },
+    "X-Plasma-API-Minimum-Version": "6.0"
+}

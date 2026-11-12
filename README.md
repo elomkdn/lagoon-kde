@@ -18,8 +18,9 @@ everything in one download.
 - **GTK and GNOME apps**: the libadwaita look, like Qt apps, with the same tones and
   teal selections, libadwaita apps included.
 - **Layout**: a top bar and a floating dock, with System Settings, the terminal, your browser
-  and your file manager (and Shelly and Spotify where they are installed). In the middle of
-  the top bar, [Teal Pill](#teal-pill), included. Its launcher is
+  and your file manager (and Shelly and Spotify where they are installed). On the left of
+  the top bar, the active app's name in bold, then its menus; the window's title is in its
+  tooltip. In the middle, [Teal Pill](#teal-pill), included. Its launcher is
   [App Grid](https://appgrid.xarbit.dev) (`plasma6-applets-appgrid` in the AUR) if it is
   installed when the layout is applied, Plasma's own otherwise.
 - **Translucent panels and popups**: the top bar, the dock, popups and tooltips let the

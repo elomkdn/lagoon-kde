@@ -1,5 +1,5 @@
 // Lagoon top bar: full width, with floating applets. On the left, the launcher (App Grid if
-// installed, else Plasma's), the virtual desktops and the global menu; in the middle, Teal
+// installed, else Plasma's), the virtual desktops, the active app's name and the global menu; in the middle, Teal
 // Pill, which comes with Lagoon; on the right, the system tray and the clock.
 var has = function (type) { return knownWidgetTypes.indexOf(type) >= 0; };
 
@@ -32,6 +32,10 @@ if (has("dev.xarbit.appgrid")) {
 
 panel.addWidget("org.kde.plasma.pager")
 panel.addWidget("org.kde.plasma.marginsseparator")
+// the active app's name, in bold, then its menus
+if (has("com.github.elomkdn.lagoon.title")) {
+    panel.addWidget("com.github.elomkdn.lagoon.title")
+}
 panel.addWidget("org.kde.plasma.appmenu")
 panel.addWidget("org.kde.plasma.panelspacer")
 if (has("com.github.elomkdn.tealpill")) {

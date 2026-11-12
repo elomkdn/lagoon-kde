@@ -203,6 +203,11 @@ if command -v msgfmt >/dev/null; then
   msgfmt -o "$PILL/contents/locale/fr/LC_MESSAGES/plasma_applet_com.github.elomkdn.tealpill.mo" \
     "$HERE/vendor/teal-pill/po/fr.po"
 fi
+
+# Lagoon Title: the active app's name, before the global menu
+TITLE=$DATA/plasma/plasmoids/com.github.elomkdn.lagoon.title
+rm -rf "$TITLE"
+cp -r "$HERE/title" "$TITLE"
 cat > "$LNF/metadata.json" <<EOF
 {
     "KPackageStructure": "Plasma/LookAndFeel",

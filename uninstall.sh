@@ -92,7 +92,8 @@ remove_lagoon() {
       konsole/Lagoon.colorscheme konsole/Lagoon.profile icons/Teal-Shell \
       plasma/layout-templates/com.github.elomkdn.lagoon.dock \
       plasma/layout-templates/com.github.elomkdn.lagoon.topbar \
-      plasma/plasmoids/com.github.elomkdn.tealpill icons/Teal icons/Teal-Papirus icons/Teal-Settings \
+      plasma/plasmoids/com.github.elomkdn.tealpill plasma/plasmoids/com.github.elomkdn.lagoon.title \
+      icons/Teal icons/Teal-Papirus icons/Teal-Settings \
       icons/hicolor/scalable/apps/lagoon-launcher.svg; do
     rm -rf "${DATA:?}/$part"
   done
