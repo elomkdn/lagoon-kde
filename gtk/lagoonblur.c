@@ -12,7 +12,8 @@
 // comme les siens (en haut seulement, sauf fenêtre .unified), sauf maximisée, en mosaïque ou en
 // plein écran.
 //
-// Wayland seulement ; les menus, popovers et infobulles restent opaques.
+// Les menus et les infobulles aussi, des surfaces à part, à 75 % comme ceux de Qt et de Plasma
+// (lagoon-blur.css) ; les popovers, dessinés dans leur fenêtre, restent opaques. Wayland seulement.
 #include <gtk/gtk.h>
 #include <gdk/gdkwayland.h>
 #include <math.h>
@@ -22,6 +23,7 @@
 #define BLUR_KEY "lagoon-blur"
 #define TRACKED_KEY "lagoon-blur-tracked"
 #define WINDOW_RADIUS 15     // les coins des fenêtres dans adw-gtk3 (window.csd), comme Klassy
+#define POPUP_RADIUS 9       // ceux des menus et des infobulles (gtk/build-gtk.py)
 #define THEME "Lagoon"
 
 typedef struct {
@@ -159,6 +161,28 @@ static void union_allocation (GtkWidget *widget, GdkRectangle *area, gboolean *f
   *found = TRUE;
 }
 
+// menu ou infobulle : la place de leur fond ; les autres fenêtres surgissantes (complétion…)
+// restent telles quelles
+static gboolean popup_area (GtkWidget *window, GdkRectangle *area)
+{
+  GtkWidget *child = gtk_bin_get_child (GTK_BIN (window));
+
+  if (GTK_IS_MENU (child)) {
+    // le menu, sans sa marge CSS (comprise dans son allocation)
+    GtkStyleContext *style = gtk_widget_get_style_context (child);
+    GtkBorder margin;
+    gtk_style_context_get_margin (style, gtk_style_context_get_state (style), &margin);
+    gtk_widget_get_allocation (child, area);
+    area->x += margin.left;
+    area->y += margin.top;
+    area->width -= margin.left + margin.right;
+    area->height -= margin.top + margin.bottom;
+    return TRUE;
+  }
+  // l'infobulle est la fenêtre elle-même
+  return g_strcmp0 (gtk_widget_class_get_css_name (GTK_WIDGET_GET_CLASS (window)), "tooltip") == 0;
+}
+
 static void update (GtkWidget *window)
 {
   GdkWindow *gdk_window = gtk_widget_get_window (window);
@@ -178,7 +202,11 @@ static void update (GtkWidget *window)
   // décoration dessinée par GTK : la fenêtre sans son ombre, celle de sa barre de titre et de
   // son contenu, aux coins arrondis
   GtkStyleContext *style = gtk_widget_get_style_context (window);
-  if (gtk_style_context_has_class (style, "csd")) {
+  if (gtk_window_get_window_type (GTK_WINDOW (window)) == GTK_WINDOW_POPUP) {
+    if (!popup_area (window, &area))
+      return;
+    top = bottom = MIN (POPUP_RADIUS, MIN (area.width, area.height) / 2);
+  } else if (gtk_style_context_has_class (style, "csd")) {
     gboolean found = FALSE;
     union_allocation (gtk_window_get_titlebar (GTK_WINDOW (window)), &area, &found);
     union_allocation (gtk_bin_get_child (GTK_BIN (window)), &area, &found);
@@ -249,7 +277,7 @@ static gboolean on_map (GSignalInvocationHint *hint, guint n_values, const GValu
 {
   GObject *object = g_value_get_object (&values[0]);
 
-  if (!GTK_IS_WINDOW (object) || gtk_window_get_window_type (GTK_WINDOW (object)) != GTK_WINDOW_TOPLEVEL)
+  if (!GTK_IS_WINDOW (object))
     return TRUE;
   if (!initialized)
     init_display (gtk_widget_get_display (GTK_WIDGET (object)));

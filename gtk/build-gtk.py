@@ -57,6 +57,7 @@ def alpha(color, a):
 
 FRAME_ALPHA = 0.95        # fond des fenêtres sans flou : le fond d'écran n'en est qu'une trace
 BLUR_FRAME_ALPHA = 0.8    # floutées (applis GTK 3, gtk/lagoonblur.c) : comme les applis Qt
+BLUR_POPUP_ALPHA = 0.75   # leurs menus et infobulles, floutés aussi : comme ceux de Qt et Plasma
 VIEW_ALPHA = 0.5          # vues et listes encadrées, posées sur le cadre, comme dans Kvantum
 FRAME = alpha(MANTLE, FRAME_ALPHA)
 
@@ -291,7 +292,7 @@ def gtk3_css(adw):
     out.append(recolored(adw, lambda s: KNOB.search(s) and not OSD.search(s), knob))
     out.append(switches(""))
     out.append(recolored(adw, OSD.search, osd3))
-    out.append("\n/* tooltips: opaque, in Mocha base like Plasma's */\n")
+    out.append("\n/* tooltips in Mocha base, like Plasma's; translucent when KWin blurs them (lagoon-blur.css) */\n")
     out.append(rule(["tooltip"], "text-shadow: none"))
     out.append(rule(["tooltip.background"], f"background-color: {BASE}", f"border-color: {SURFACE0}"))
     out.append(rule(["tooltip *"], f"color: {TEXT}"))
@@ -343,7 +344,7 @@ def gtk4_css(adw):
     out.append(recolored(adw, lambda s: KNOB.search(s) and not re.search(r"scale\.color|\.osd", s), knob))
     out.append(switches(">"))
     out.append(recolored(adw, OSD.search, osd4))
-    out.append("\n/* tooltips: opaque, in Mocha base like Plasma's */\n")
+    out.append("\n/* tooltips in Mocha base, like Plasma's; opaque: GTK 4 apps can't ask KWin to blur them */\n")
     out.append(rule(["tooltip.background"], f"background-color: {BASE}", f"color: {TEXT}",
                     f"border-color: {SURFACE0}"))
     out.append("\n/* window buttons: red, yellow and green dots like the Catppuccin decoration, glyph on hover */\n")
@@ -370,7 +371,7 @@ def gtk4_css(adw):
 
 def blur_css():
     """GTK 3 windows that KWin blurs (gtk/lagoonblur.c loads this sheet, above the theme): the
-    frame at BLUR_FRAME_ALPHA, like Qt windows. The bars that paint the frame's color over the
+    frame at BLUR_FRAME_ALPHA, like Qt windows, menus and tooltips at BLUR_POPUP_ALPHA. The bars that paint the frame's color over the
     window's own background let it show through instead, as Kvantum's toolbars do: on top of it,
     translucent, they would make darker bands."""
     # GTK 3 resolves a sheet's named colors within that sheet: redefined here, they would not
@@ -382,6 +383,8 @@ def blur_css():
                      ".inline-toolbar", "searchbar > revealer > box", ".location-bar", "notebook > header",
                      "menubar", ".menubar", ".sidebar", "paned > separator.wide", "tabbar .box"],
                     "background-color: transparent"))
+    # menus and tooltips, separate surfaces that the module has KWin blur too
+    out.append(rule(["menu", "tooltip.background"], f"background-color: {alpha(BASE, BLUR_POPUP_ALPHA)}"))
     return "".join(out)
 
 
@@ -401,8 +404,9 @@ ButtonLayout=close,minimize,maximize:
 def main():
     src, themes, name = Path(sys.argv[1]), Path(sys.argv[2]), sys.argv[3]
     dst = themes / name
-    shutil.rmtree(dst, ignore_errors=True)
+    # ses dossiers seulement : le thème Kvantum et le plugin Qt vivent à côté (build.sh)
     for gtk in ("gtk-3.0", "gtk-4.0"):
+        shutil.rmtree(dst / gtk, ignore_errors=True)
         shutil.copytree(src / gtk, dst / gtk)
     (dst / "index.theme").write_text(INDEX.format(name=name))
 

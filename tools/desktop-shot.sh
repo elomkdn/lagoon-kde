@@ -50,27 +50,46 @@ echo "Installation dans un dossier jetable…"
 # la place des deux fenêtres : KWin lit ses règles au démarrage
 cat > "$H/.config/kwinrulesrc" <<EOF
 [General]
-count=2
-rules=1,2
+count=3
+rules=1,2,3
 
 [1]
 Description=systemsettings
 wmclass=systemsettings
 wmclassmatch=1
 position=$((WIDTH * 60 / 1920)),70
-positionrule=2
+positionrule=3
 size=1010,690
-sizerule=2
+sizerule=3
 
 [2]
 Description=dolphin
-wmclass=dolphin
+wmclass=org.kde.dolphin
 wmclassmatch=1
-position=$((WIDTH - 940)),$((HEIGHT - 770))
-positionrule=2
-size=880,610
-sizerule=2
+position=$((WIDTH - 960)),$((HEIGHT * 130 / 1200))
+positionrule=3
+size=880,600
+sizerule=3
+
+[3]
+Description=konsole
+wmclass=org.kde.konsole
+wmclassmatch=1
+position=$((WIDTH * 90 / 1920)),$((HEIGHT - 440))
+positionrule=3
+size=760,320
+sizerule=3
 EOF
+
+# ce que le terminal montre : ses couleurs, par fastfetch (sans la ligne utilisateur@machine)
+cat > "$WORK/terminal.sh" <<'EOF'
+#!/bin/sh
+clear
+fastfetch --logo-type small --structure "OS:Kernel:DE:WM:Theme:Icons:Cursor:Break:Colors" 2>/dev/null ||
+  printf '\033[36mLagoon\033[0m\n'
+exec sleep 600
+EOF
+chmod +x "$WORK/terminal.sh"
 
 # une pochette pour le morceau : un coin du fond d'écran
 python3 -I - "$H/.local/share/wallpapers/Lagoon/contents/images/1920x1080.png" "$WORK/cover.png" <<'EOF'
@@ -83,6 +102,9 @@ cat > "$WORK/session.sh" <<EOF
 #!/bin/bash
 exec > "$WORK/session.log" 2>&1
 kbuildsycoca6 --noincremental 2>/dev/null
+# l'environnement de la session, comme le donne startplasma : le plugin Qt du panneau
+# Emplacements et le module GTK 3 (install.sh)
+for f in "\$HOME"/.config/plasma-workspace/env/*.sh; do [ -r "\$f" ] && . "\$f"; done
 # depuis un dossier neutre (voir install.sh)
 (cd / && plasma-apply-lookandfeel -a Lagoon)
 # les fenêtres arrondies de Klassy, comme le README les recommande, si Klassy est là
@@ -98,6 +120,8 @@ plasmashell --no-respawn &
 sleep 16
 systemsettings &
 sleep 6
+(cd && konsole --profile Lagoon --hide-menubar --hide-tabbar -p LocalTabTitleFormat=Terminal -e "$WORK/terminal.sh") &
+sleep 4
 dolphin --select "\$HOME/Documents" &
 sleep 8
 spectacle -b -n -f -o "$WORK/shot.png"

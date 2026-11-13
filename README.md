@@ -49,6 +49,10 @@ everything in one download.
 
 *[Teal](https://github.com/elomkdn/teal-icons), the icon theme that comes with Lagoon.*
 
+![Teal, the cursors that come with Lagoon, on Mocha, on the teal accent and on a light background](screenshots/teal-cursors.png)
+
+*The Teal cursors: a thick dark outline keeps them clear on the teal accent and on light pages.*
+
 ## Install
 
 1. Get the theme, either way:
@@ -176,18 +180,22 @@ toolbars in mantle, views in base. Windows are translucent and blurred: their ma
 at 80 %, the title bar's opacity with Klassy, so that the title bar and the toolbar read as one;
 views lay their base over it at half opacity, so content still stands out from its frame. Menus
 and tooltips are translucent and blurred in Mocha base, like Plasma's popups. Apps that draw
-video or OpenGL keep opaque windows.
+video or OpenGL keep opaque windows. Selections are teal with dark text, as in GTK and
+Kirigami apps, softer in inactive windows.
+
+## GTK apps
+
+The GTK theme is the libadwaita look of [adw-gtk3](https://github.com/lassekongo83/adw-gtk3),
+in the same tones as Qt apps; libadwaita apps read the same palette.
 
 KWin only blurs behind windows that ask for it, and GTK never does. Lagoon's GTK 3 module asks
 for it on behalf of every GTK 3 app (`gtk/lagoonblur.c`, with the standard
 `ext-background-effect` protocol, or KDE's own before KWin 6.8): while KWin blurs, their windows
-are translucent at 80 % like Qt windows, header bars and toolbars included. GTK 4 dropped
-modules, so GTK 4 and libadwaita apps can't ask: their windows stay at 95 %, a hint of
-translucency that keeps the sharp wallpaper behind them from showing through. So do GTK 3
-apps when KWin's blur effect is off. Firefox, Electron and Kirigami apps (System Settings,
-Discover) stay opaque.
-Selections are teal with dark text, as in GTK and Kirigami apps, softer in inactive
-windows.
+are translucent at 80 % like Qt windows, header bars and toolbars included, and their menus and
+tooltips at 75 % like Qt's and Plasma's. GTK 4 dropped modules, so GTK 4 and libadwaita apps
+can't ask: their windows stay at 95 %, a hint of translucency that keeps the sharp wallpaper
+behind them from showing through, and their menus opaque. So do GTK 3 apps when KWin's blur
+effect is off. Firefox, Electron and Kirigami apps (System Settings, Discover) stay opaque.
 
 ## In this repository
 
