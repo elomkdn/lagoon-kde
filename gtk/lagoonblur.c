@@ -126,20 +126,25 @@ static void release (Blur *b)
   g_free (b);
 }
 
-// retrait d'une rangée de pixels sous l'arrondi de rayon r : ceux qu'il couvre en entier
-static int inset (int r, int i)
+// retrait d'une rangée de pixels sous l'arrondi de rayon r. Une fenêtre a un liseré presque
+// opaque sur son bord : le flou y prend tout pixel que l'arrondi touche (spill), le liseré cache ce
+// qui déborde, et l'arrondi n'a pas de croissant non flouté. Un menu n'en a pas : les pixels
+// couverts à moitié, pour ne pas laisser de halo clair.
+static int inset (int r, int i, gboolean spill)
 {
-  double dy = r - i;
-  return (int) ceil (r - sqrt ((double) r * r - dy * dy));
+  double dy = spill ? r - i - 1 : r - i - .5;
+  double x = r - sqrt ((double) r * r - dy * dy);
+  return spill ? (int) floor (x) : (int) round (x);
 }
 
-static void add_rounded (struct wl_region *region, GdkRectangle *a, int top, int bottom)
+static void add_rounded (struct wl_region *region, GdkRectangle *a, int top, int bottom, gboolean spill)
 {
   wl_region_add (region, a->x, a->y + top, a->width, a->height - top - bottom);
   for (int i = 0; i < top; i++)
-    wl_region_add (region, a->x + inset (top, i), a->y + i, a->width - 2 * inset (top, i), 1);
+    wl_region_add (region, a->x + inset (top, i, spill), a->y + i, a->width - 2 * inset (top, i, spill), 1);
   for (int i = 0; i < bottom; i++)
-    wl_region_add (region, a->x + inset (bottom, i), a->y + a->height - 1 - i, a->width - 2 * inset (bottom, i), 1);
+    wl_region_add (region, a->x + inset (bottom, i, spill), a->y + a->height - 1 - i,
+                   a->width - 2 * inset (bottom, i, spill), 1);
 }
 
 // la place d'un enfant de la fenêtre, ses marges comprises (son allocation ne les compte pas)
@@ -163,16 +168,19 @@ static void union_allocation (GtkWidget *widget, GdkRectangle *area, gboolean *f
 
 // menu ou infobulle : la place de leur fond ; les autres fenêtres surgissantes (complétion…)
 // restent telles quelles
-static gboolean popup_area (GtkWidget *window, GdkRectangle *area)
+static gboolean popup_area (GtkWidget *window, GdkRectangle *area, GdkPoint *origin)
 {
   GtkWidget *child = gtk_bin_get_child (GTK_BIN (window));
 
   if (GTK_IS_MENU (child)) {
-    // le menu, sans sa marge CSS (comprise dans son allocation)
+    // le menu, sans sa marge CSS (comprise dans son allocation) ; son allocation est la
+    // géométrie de la fenêtre, après son ombre
     GtkStyleContext *style = gtk_widget_get_style_context (child);
     GtkBorder margin;
     gtk_style_context_get_margin (style, gtk_style_context_get_state (style), &margin);
     gtk_widget_get_allocation (child, area);
+    origin->x = area->x;
+    origin->y = area->y;
     area->x += margin.left;
     area->y += margin.top;
     area->width -= margin.left + margin.right;
@@ -190,6 +198,7 @@ static void update (GtkWidget *window)
   Blur *b = g_object_get_data (G_OBJECT (window), BLUR_KEY);
   GdkRectangle area = { 0, 0, gtk_widget_get_allocated_width (window), gtk_widget_get_allocated_height (window) };
   int top = 0, bottom = 0;
+  GdkPoint origin = { 0, 0 };   // où commence la géométrie de la fenêtre, après son ombre
 
   if (!(effects || kde_blur) || !gdk_window || !gtk_widget_get_mapped (window)
       || !(surface = gdk_wayland_window_get_wl_surface (gdk_window)))
@@ -203,13 +212,15 @@ static void update (GtkWidget *window)
   // son contenu, aux coins arrondis
   GtkStyleContext *style = gtk_widget_get_style_context (window);
   if (gtk_window_get_window_type (GTK_WINDOW (window)) == GTK_WINDOW_POPUP) {
-    if (!popup_area (window, &area))
+    if (!popup_area (window, &area, &origin))
       return;
     top = bottom = MIN (POPUP_RADIUS, MIN (area.width, area.height) / 2);
   } else if (gtk_style_context_has_class (style, "csd")) {
     gboolean found = FALSE;
     union_allocation (gtk_window_get_titlebar (GTK_WINDOW (window)), &area, &found);
     union_allocation (gtk_bin_get_child (GTK_BIN (window)), &area, &found);
+    origin.x = area.x;
+    origin.y = area.y;
     if (!(gdk_window_get_state (gdk_window) & (GDK_WINDOW_STATE_MAXIMIZED | GDK_WINDOW_STATE_FULLSCREEN
                                                | GDK_WINDOW_STATE_TILED | GDK_WINDOW_STATE_TOP_TILED
                                                | GDK_WINDOW_STATE_BOTTOM_TILED | GDK_WINDOW_STATE_LEFT_TILED
@@ -237,7 +248,13 @@ static void update (GtkWidget *window)
 
   struct wl_region *region =
     wl_compositor_create_region (gdk_wayland_display_get_wl_compositor (gdk_window_get_display (gdk_window)));
-  add_rounded (region, &area, top, bottom);
+  // KWin lit la région depuis le bord visible de la fenêtre (sa géométrie xdg), non depuis le
+  // coin de la surface comme le dit le protocole : une fenêtre ou un menu dessinés par GTK
+  // commencent après leur ombre, et la région, donnée depuis la surface, serait décalée
+  // d'autant (une bande sans flou en haut et à gauche)
+  GdkRectangle local = { area.x - origin.x, area.y - origin.y, area.width, area.height };
+  add_rounded (region, &local, top, bottom,
+               gtk_window_get_window_type (GTK_WINDOW (window)) != GTK_WINDOW_POPUP);
   if (b->effect) {
     ext_background_effect_surface_v1_set_blur_region (b->effect, region);
   } else {

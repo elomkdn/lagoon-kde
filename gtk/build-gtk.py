@@ -292,6 +292,8 @@ def gtk3_css(adw):
     out.append(recolored(adw, lambda s: KNOB.search(s) and not OSD.search(s), knob))
     out.append(switches(""))
     out.append(recolored(adw, OSD.search, osd3))
+    out.append("\n/* windows that GTK decorates: their translucent background from their decoration */\n")
+    out.append(csd_frame(FRAME))
     out.append("\n/* tooltips in Mocha base, like Plasma's; translucent when KWin blurs them (lagoon-blur.css) */\n")
     out.append(rule(["tooltip"], "text-shadow: none"))
     out.append(rule(["tooltip.background"], f"background-color: {BASE}", f"border-color: {SURFACE0}"))
@@ -369,6 +371,23 @@ def gtk4_css(adw):
     return "".join(out)
 
 
+def csd_frame(frame):
+    """GTK 3: a window that GTK decorates gets its background, at the frame's opacity, from its
+    decoration, which follows its outline (rounded at the top, square at the bottom) and runs
+    under the title bar too. GTK's own background leaves out the title bar and rounds the bottom
+    corners inside the square outline: two holes once the window is translucent. Maximized or
+    full screen, GTK draws no decoration: the window and its title bar paint it then."""
+    bare = ":not(.maximized):not(.fullscreen)"
+    return (rule([f".csd:not(.popup):not(tooltip){bare} > decoration"], f"background-color: {frame}")
+            + rule([f"window.csd.background{bare}", f"dialog.csd.background{bare}",
+                    f"messagedialog.csd.background{bare}", f"assistant.csd.background{bare}"],
+                   "background-color: transparent")
+            + rule([f".csd{bare} > .titlebar", ".csd > .titlebar:not(headerbar) headerbar"],
+                   "background-color: transparent", "background-image: none")
+            + rule([".csd.maximized > .titlebar", ".csd.fullscreen > .titlebar"],
+                   f"background-color: {frame}", "background-image: none"))
+
+
 def blur_css():
     """GTK 3 windows that KWin blurs (gtk/lagoonblur.c loads this sheet, above the theme): the
     frame at BLUR_FRAME_ALPHA, like Qt windows, menus and tooltips at BLUR_POPUP_ALPHA. The bars that paint the frame's color over the
@@ -382,7 +401,8 @@ def blur_css():
     out.append(rule(["headerbar", ".titlebar:not(headerbar)", "toolbar:not(.osd)", ".toolbar", ".primary-toolbar",
                      ".inline-toolbar", "searchbar > revealer > box", ".location-bar", "notebook > header",
                      "menubar", ".menubar", ".sidebar", "paned > separator.wide", "tabbar .box"],
-                    "background-color: transparent"))
+                    "background-color: transparent", "background-image: none"))
+    out.append(csd_frame(alpha(MANTLE, BLUR_FRAME_ALPHA)))
     # menus and tooltips, separate surfaces that the module has KWin blur too
     out.append(rule(["menu", "tooltip.background"], f"background-color: {alpha(BASE, BLUR_POPUP_ALPHA)}"))
     return "".join(out)
