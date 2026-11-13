@@ -16,20 +16,24 @@ everything in one download.
 - **One accent everywhere**: buttons, check boxes, selections, text fields,
   progress and busy indicators all follow the color scheme's accent.
 - **GTK and GNOME apps**: the libadwaita look, like Qt apps, with the same tones and
-  teal selections, libadwaita apps included.
+  teal selections, libadwaita apps included. GTK 3 apps are translucent and blurred like Qt
+  apps; GTK 4 and libadwaita apps, which KWin can't blur, keep a hint of translucency.
 - **Layout**: a top bar and a floating dock, with System Settings, the terminal, your browser
   and your file manager (and Shelly and Spotify where they are installed). On the left of
   the top bar, the active app's name in bold, then its menus; the window's title is in its
   tooltip. In the middle, [Teal Pill](#teal-pill), included. Its launcher is
   [App Grid](https://appgrid.xarbit.dev) (`plasma6-applets-appgrid` in the AUR) if it is
   installed when the layout is applied, Plasma's own otherwise.
-- **Translucent panels and popups**: the top bar, the dock, popups and tooltips let the
-  blurred desktop show through, with smooth rounded corners and no outline. They turn
-  opaque when KWin's blur effect is off, or when a panel is set to opaque.
+- **Translucent panels, popups and windows**: the top bar, the dock, popups and tooltips let
+  the blurred desktop show through, with smooth rounded corners and no outline. They turn
+  opaque when KWin's blur effect is off, or when a panel is set to opaque. Qt apps' windows
+  (Dolphin, Kate, Ark, Okular…) and the terminal are translucent and blurred too, title bar
+  included (see [Kvantum](#kvantum)).
 - **Wallpapers**: Catppuccin waves and the CachyOS logo, and the same waves without the logo,
   for the lock screen. Both in 7 resolutions.
-- **Terminal**: Konsole's colors in Mocha, through a *Lagoon* profile; a profile you chose
-  already stays yours, and can take the *Lagoon* color scheme.
+- **Terminal**: Konsole's colors in Mocha, translucent and blurred like the windows, through a
+  *Lagoon* profile; a profile you chose already stays yours, and can take the *Lagoon* color
+  scheme.
 - **Splash screen**: the wallpaper's logo, whose bubbles float up from the C while
   the session loads, then fades into the desktop.
 - **Window decoration**: Klassy with rounded corners, selected by the installer when it is
@@ -142,8 +146,8 @@ in the corners). The global theme selects it because it needs nothing else insta
 The recommended decoration is [Klassy](https://github.com/paulmcauley/klassy), from the
 AUR (`paru -S klassy`): KWin then rounds the whole window, blur included. A ready-made
 Klassy configuration is included (`extras/klassy/klassyrc`): 15 px corners, matching
-GTK windows and Plasma popups, the same red, yellow and green buttons, slightly
-translucent title bar, a faint outline, and a deeper shadow on the active window.
+GTK windows and Plasma popups, the same red, yellow and green buttons, a title bar as
+translucent as Qt windows (80 %), a faint outline, and a deeper shadow on the active window.
 
 When Klassy is installed, the installer selects it as it applies Lagoon. A Klassy
 configuration of your own is kept; to take Lagoon's instead (yours is kept as
@@ -168,8 +172,20 @@ the look of GNOME apps, like the GTK theme: the global theme selects Kvantum, an
 with the teal accent, with the GTK theme's radii (9 px buttons, text fields, menus, list
 and menu rows, tooltips; round toolbar buttons) at KvLibadwaita's density. Its tones
 follow the color scheme, like Kirigami and GTK apps: window backgrounds, menu bars and
-toolbars in mantle, views in base. Menus and tooltips are translucent and blurred in Mocha
-base, like Plasma's popups; windows stay opaque.
+toolbars in mantle, views in base. Windows are translucent and blurred: their mantle background
+at 80 %, the title bar's opacity with Klassy, so that the title bar and the toolbar read as one;
+views lay their base over it at half opacity, so content still stands out from its frame. Menus
+and tooltips are translucent and blurred in Mocha base, like Plasma's popups. Apps that draw
+video or OpenGL keep opaque windows.
+
+KWin only blurs behind windows that ask for it, and GTK never does. Lagoon's GTK 3 module asks
+for it on behalf of every GTK 3 app (`gtk/lagoonblur.c`, with the standard
+`ext-background-effect` protocol, or KDE's own before KWin 6.8): while KWin blurs, their windows
+are translucent at 80 % like Qt windows, header bars and toolbars included. GTK 4 dropped
+modules, so GTK 4 and libadwaita apps can't ask: their windows stay at 95 %, a hint of
+translucency that keeps the sharp wallpaper behind them from showing through. So do GTK 3
+apps when KWin's blur effect is off. Firefox, Electron and Kirigami apps (System Settings,
+Discover) stay opaque.
 Selections are teal with dark text, as in GTK and Kirigami apps, softer in inactive
 windows.
 
@@ -184,7 +200,7 @@ plasma/desktoptheme/Lagoon     the Plasma theme; build-translucent.py beside it
 plasma/look-and-feel/Lagoon    the global theme: settings, splash, previews
 plasma/layout-templates        the top bar and the dock
 plasma/plasmoids               Lagoon Title
-gtk/                           the GTK theme's builder, and the GTK 3 module for the window buttons
+gtk/                           the GTK theme's builder, and the GTK 3 module (window buttons, blur)
 kvantum/                       the Kvantum style's builder
 qt/                            the Qt plugin for the Places panel
 konsole/                       the terminal's colors and profile

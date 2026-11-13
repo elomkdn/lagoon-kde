@@ -9,11 +9,12 @@ l'accent teal et aux rayons du thème GTK (9 px).
   au-dessus, les boutons en surface0 ; son bleu passe sur le teal ; les coches et les points
   posés sur l'accent deviennent sombres (crust). Les applis Qt Widgets ressemblent ainsi aux
   applis Kirigami, qui suivent le jeu de couleurs ;
-- menus et infobulles : la base Mocha à POPUP_ALPHA, floutée, comme les popups de Plasma ; les
-  fenêtres restent opaques (leur fond l'est), mais Kvantum ne floute les popups dès leur
-  ouverture qu'avec la translucidité des fenêtres (translucent_windows, blurring) : sans elle,
-  popup_blurring seul n'applique pas le flou, sous Wayland, et les menus laissent voir net ce
-  qu'il y a derrière ;
+- fenêtres translucides et floutées : leur fond (mantle) à WINDOW_ALPHA, l'opacité des barres de
+  titre de Klassy (extras/klassy/klassyrc), pour que barre de titre et fenêtre ne fassent
+  qu'un ; les barres d'outils et de menus, de la couleur du fond, deviennent transparentes pour
+  le laisser voir ; les vues (listes, arbres, champs de texte) gardent leur base, à VIEW_ALPHA
+  par-dessus : le contenu se détache encore du cadre, comme dans libadwaita ;
+- menus et infobulles : la base Mocha à POPUP_ALPHA, floutée, comme les popups de Plasma ;
 - sélections des listes : l'accent teal et un texte sombre, avec ou sans focus, comme dans
   GTK, Kirigami et le jeu de couleurs Catppuccin (voir SELECTION) ;
 - curseurs et barres de progression : les épaisseurs de libadwaita (4 et 8 px), comme GTK ;
@@ -39,6 +40,11 @@ SUBTEXT0, SUBTEXT1, TEXT = "#a6adc8", "#bac2de", "#cdd6f4"
 TEAL, MAUVE, RED = "#94e2d5", "#cba6f7", "#f38ba8"
 
 
+def rgba(color, alpha):
+    """Couleur translucide au format de Kvantum (#rrggbbaa)."""
+    return f"{color}{round(255 * alpha):02x}"
+
+
 def mix(a, b, t):
     ca = [int(a[i:i + 2], 16) for i in (1, 3, 5)]
     cb = [int(b[i:i + 2], 16) for i in (1, 3, 5)]
@@ -47,6 +53,8 @@ def mix(a, b, t):
 
 POPUP = BASE                              # comme les popups de Plasma : la base Mocha
 POPUP_ALPHA = 0.75                        # et la même opacité (plasma/desktoptheme/build-translucent.py)
+WINDOW_ALPHA = 0.8                        # fond des fenêtres : TitleBarOpacity de extras/klassy/klassyrc
+VIEW_ALPHA = 0.5                          # fond des vues, posé sur celui de la fenêtre (0,9 en tout)
 FIELD = mix(BASE, SURFACE0, 0.75)         # champs : un cran au-dessus de la fenêtre
 HOVER = mix(BASE, SURFACE0, 0.8)          # ligne survolée
 TEAL_HOVER = mix(TEAL, TEXT, 0.25)        # accent survolé, un peu plus clair
@@ -97,11 +105,16 @@ SCOPED = {
     r"^slidercursor(-tickless)?-disabled": {TEXT: OVERLAY0},  # désactivée, elle s'efface
     r"^(checkbox|radio)-focused": {"#4b4b4b": SURFACE2},   # survolé : bord plus clair qu'au repos
 }
+# Barres d'outils et de menus, docks : du fond des fenêtres, transparents pour laisser voir sa
+# translucidité (opaques, ils feraient une bande sombre en haut de la fenêtre)
+BARS = r"^(menubar-normal|dock-(normal|focused))(-inactive)?(-(top|bottom|left|right|topleft|topright|bottomleft|bottomright))?$"
+BAR_FILLS = ("#2e2e32", "#222226", "#1d1d20", "#2c2c2c")
 # Fonds des menus et des infobulles, à POPUP_ALPHA (KvLibadwaita : infobulles noires à 80 %)
 POPUPS = r"^(menu-(normal|shadow)|tooltip-normal)"  # l'ombre des menus dessine le bord de leur fond
 
 GENERAL_COLORS = {
-    "window.color": MANTLE, "base.color": BASE, "alt.base.color": MANTLE,  # comme le jeu de couleurs
+    # comme le jeu de couleurs ; les vues translucides (voir VIEW_ALPHA)
+    "window.color": MANTLE, "base.color": rgba(BASE, VIEW_ALPHA), "alt.base.color": rgba(MANTLE, VIEW_ALPHA),
     "button.color": SURFACE0, "light.color": SURFACE1, "mid.light.color": mix(SURFACE0, SURFACE1, 0.5),
     "dark.color": MANTLE, "mid.color": SURFACE0,
     "highlight.color": TEAL, "inactive.highlight.color": SELECTION_INACTIVE,
@@ -136,11 +149,11 @@ EXPAND = {  # élément du SVG : (sections du kvconfig, taille des coins)
 SETTINGS = {
     "%General": {"author": "Elom, based on KvLibadwaita by GabePoel",
                  "comment": "Lagoon: the libadwaita look in Catppuccin Mocha with a teal accent",
-                 # menus et infobulles translucides et floutés (voir plus haut) ; les applis qui
-                 # dessinent de la vidéo ou de l'OpenGL gardent des fenêtres opaques (la liste de
-                 # KvMojave, le thème translucide de Kvantum)
+                 # fenêtres, menus et infobulles translucides et floutés (voir plus haut) ; les
+                 # applis qui dessinent de la vidéo ou de l'OpenGL gardent des fenêtres opaques (la
+                 # liste de KvMojave, le thème translucide de Kvantum)
                  "translucent_windows": "true", "blurring": "true", "popup_blurring": "true",
-                 "reduce_window_opacity": "0", "reduce_menu_opacity": "0",
+                 "reduce_window_opacity": str(round(100 * (1 - WINDOW_ALPHA))), "reduce_menu_opacity": "0",
                  "menu_blur_radius": str(RADIUS), "tooltip_blur_radius": str(RADIUS),
                  "opaque": OPAQUE_APPS,
                  # chaque bouton d'outils garde ses quatre coins, même collé à un voisin
@@ -149,7 +162,8 @@ SETTINGS = {
                  # les épaisseurs de libadwaita, celles du thème GTK
                  "slider_width": "4", "progressbar_thickness": "8"},
     "Menu": {f"frame.{side}": str(RADIUS) for side in ("top", "bottom", "left", "right")},
-    # vue de Dolphin transparente : elle prendrait le fond des fenêtres (mantle) au lieu de base
+    # la vue de Dolphin garde sa base translucide, comme celles des autres applis : transparente,
+    # elle prendrait le fond des fenêtres (mantle) et se confondrait avec le panneau Emplacements
     "Hacks": {"transparent_dolphin_view": "false"},
     "ItemView": {"text.press.color": CRUST, "text.press.inactive.color": CRUST,
                  "text.toggle.color": CRUST, "text.toggle.inactive.color": CRUST},
@@ -237,6 +251,10 @@ def build_svg(text):
         for pattern, mapping in SCOPED.items():
             if re.match(pattern, eid):
                 recolor_attrs(e, mapping)
+        if re.match(BARS, eid):
+            for x in e.iter():
+                if any(f"fill:{c}" in (x.get("style") or "") for c in BAR_FILLS):
+                    set_style(x, fill_opacity="0")
         if re.match(POPUPS, eid):
             for x in e.iter():
                 if POPUP in (x.get("style") or ""):

@@ -63,7 +63,7 @@ LockFullHeightButtonSpacingLeftRight=true
 [TitleBarOpacity]
 OpaqueMaximizedTitleBars=false
 TitleBarOpacityActive=80
-TitleBarOpacityInactive=60
+TitleBarOpacityInactive=80
 
 [TitleBarSpacing]
 PercentMaximizedTopBottomMargins=100

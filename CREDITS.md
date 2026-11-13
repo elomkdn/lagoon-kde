@@ -15,6 +15,8 @@ component below.
 | [Teal](https://github.com/elomkdn/teal-icons) | The icon theme, included in the release archive (from a clone, downloaded from its release); made from Adwair (kusaida) and Papirus (Papirus Development Team) | Elom, kusaida, Papirus Development Team | GPL-3.0 |
 | [Teal Pill](https://github.com/elomkdn/teal-pill) | The top bar's music island, included (`vendor/teal-pill`, a copy of its repository's `package/` and `po/`); itself based on PlasMusic Toolbar by Claudio Catterina | Elom, Claudio Catterina | GPL-3.0-or-later |
 | [Catppuccin palette](https://github.com/catppuccin/palette) | Mocha colors | Catppuccin | MIT |
+| [Plasma Wayland protocols](https://invent.kde.org/libraries/plasma-wayland-protocols) | KDE's blur protocol (`vendor/plasma-wayland-protocols/blur.xml`), for the GTK 3 module's blur before KWin 6.8 | Martin Gräßlin, Marco Martin | LGPL-2.1-or-later |
+| [Wayland protocols](https://gitlab.freedesktop.org/wayland/wayland-protocols) | The `ext-background-effect` protocol (`vendor/wayland-protocols/ext-background-effect-v1.xml`), for the GTK 3 module's blur | Martin Gräßlin, Marco Martin, Vlad Zahorodnii, Xaver Hugl | MIT |
 | [Catppuccin cursors](https://github.com/catppuccin/cursors) v2.0.0 | Mocha Teal cursors (`vendor/catppuccin-cursors`), based on Volantes Cursors by Alexey Varfolomeev; retouched by `icons/build-cursors.py` (thicker outline, gradient, a rounded arrow of Lagoon's own drawing) | Catppuccin | GPL-2.0 |
 
 The wallpaper (`wallpapers/make-wallpaper.py`) is an original drawing inspired by

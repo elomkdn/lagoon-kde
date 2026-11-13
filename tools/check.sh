@@ -86,7 +86,7 @@ else
   cat "$WORK/install.log" >&2; bad "l'installeur"
 fi
 for part in plasma/look-and-feel/Lagoon/metadata.json plasma/desktoptheme/Lagoon/metadata.json color-schemes/Lagoon.colors \
-            themes/Lagoon/gtk-4.0/lagoon.css themes/Lagoon/gtk-3.0/liblagoonbuttons.so themes/Lagoon/qt6/generic/liblagoonplaces.so themes/Lagoon/Kvantum/Lagoon.kvconfig wallpapers/Lagoon/metadata.json \
+            themes/Lagoon/gtk-4.0/lagoon.css themes/Lagoon/gtk-3.0/liblagoonbuttons.so themes/Lagoon/gtk-3.0/lagoon-blur.css themes/Lagoon/qt6/generic/liblagoonplaces.so themes/Lagoon/Kvantum/Lagoon.kvconfig wallpapers/Lagoon/metadata.json \
             plasma/plasmoids/com.github.elomkdn.tealpill/metadata.json konsole/Lagoon.colorscheme; do
   [ -e "$D/$part" ] || bad "il manque $part"
 done
@@ -99,6 +99,7 @@ expect "le thème Kvantum est choisi, l'ancien gardé" test "$(read_key "$C/Kvan
 expect "le thème GTK est choisi" grep -qx "gtk-theme-name=Lagoon" "$C/gtk-3.0/settings.ini"
 expect "les applis libadwaita lisent la palette" grep -q "/themes/Lagoon/gtk-4.0/lagoon.css" "$C/gtk-4.0/gtk.css"
 expect "les applis GTK 3 chargent le module des boutons" grep -q "themes/Lagoon/gtk-3.0/liblagoonbuttons.so" "$C/plasma-workspace/env/lagoon-gtk3.sh"
+expect "le module GTK 3 sait demander le flou" grep -q ext_background_effect_manager_v1 "$D/themes/Lagoon/gtk-3.0/liblagoonbuttons.so"
 expect "les applis Qt chargent le plugin du panneau Emplacements" grep -q "themes/Lagoon/qt6" "$C/plasma-workspace/env/lagoon-qt.sh"
 expect "Firefox lit les pastilles" grep -q "// Lagoon" "$H/.mozilla/firefox/abc.default/user.js"
 expect "la configuration Klassy de l'utilisateur reste" grep -qx "Mine=1" "$C/klassy/klassyrc"

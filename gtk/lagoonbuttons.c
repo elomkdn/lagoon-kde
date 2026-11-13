@@ -2,7 +2,8 @@
 // :hover qu'au bouton survolé, et son CSS ne sait viser ni le parent ni les frères précédents :
 // ce module pose la classe .lagoon-hover sur la boîte des boutons tant que le pointeur y est.
 // Le CSS du thème (build-gtk.py) fait le reste ; sans le module, ils réagissent un par un.
-// Chargé par GTK3_MODULES, voir install.sh.
+// Chargé par GTK3_MODULES, voir install.sh. Compilé avec gtk/lagoonblur.c (LAGOON_BLUR), il
+// demande aussi à KWin de flouter derrière les fenêtres.
 #include <gtk/gtk.h>
 
 #define HOVER_CLASS "lagoon-hover"
@@ -59,10 +60,16 @@ static gboolean on_crossing (GSignalInvocationHint *hint, guint n_values, const 
   return TRUE;
 }
 
+#ifdef LAGOON_BLUR
+void lagoon_blur_init (const gchar *module_path);
+#endif
+static gchar *module_path;
+
 // les crochets de signaux restent posés : le module ne doit pas être déchargé
 G_MODULE_EXPORT const gchar *g_module_check_init (GModule *module)
 {
   g_module_make_resident (module);
+  module_path = g_strdup (g_module_name (module));
   return NULL;
 }
 
@@ -73,4 +80,7 @@ G_MODULE_EXPORT void gtk_module_init (gint *argc, gchar ***argv)
   g_signal_add_emission_hook (g_signal_lookup ("enter-notify-event", GTK_TYPE_WIDGET), 0, on_crossing, GINT_TO_POINTER (TRUE), NULL);
   g_signal_add_emission_hook (g_signal_lookup ("leave-notify-event", GTK_TYPE_WIDGET), 0, on_crossing, GINT_TO_POINTER (FALSE), NULL);
   g_type_class_unref (widget_class);
+#ifdef LAGOON_BLUR
+  lagoon_blur_init (module_path);
+#endif
 }

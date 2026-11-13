@@ -23,6 +23,12 @@ sélecteurs, relevés dans leurs feuilles de style : même spécificité, et les
 après. Les applis libadwaita ignorent le thème GTK : elles lisent gtk-4.0/lagoon.css par
 ~/.config/gtk-4.0/gtk.css (install.sh), où ses règles l'emportent sur celles de libadwaita.
 
+Translucidité : le cadre à FRAME_ALPHA, les vues à VIEW_ALPHA par-dessus. Sans flou derrière
+(KWin ne floute que les fenêtres qui le demandent, et GTK ne le demande pas), le fond d'écran
+passerait net à travers une fenêtre plus transparente. Les applis GTK 3 le demandent par le
+module (gtk/lagoonblur.c), qui charge alors gtk-3.0/lagoon-blur.css : leur cadre à
+BLUR_FRAME_ALPHA, comme celui des applis Qt (kvantum/build-kvantum.py, WINDOW_ALPHA).
+
 usage : gtk/build-gtk.py <dossier d'adw-gtk3> <dossier des thèmes> <nom>
 """
 import re
@@ -49,6 +55,12 @@ def alpha(color, a):
     return f"rgba({', '.join(channels(color))}, {a})"
 
 
+FRAME_ALPHA = 0.95        # fond des fenêtres sans flou : le fond d'écran n'en est qu'une trace
+BLUR_FRAME_ALPHA = 0.8    # floutées (applis GTK 3, gtk/lagoonblur.c) : comme les applis Qt
+VIEW_ALPHA = 0.5          # vues et listes encadrées, posées sur le cadre, comme dans Kvantum
+FRAME = alpha(MANTLE, FRAME_ALPHA)
+
+
 # Couleurs nommées d'adw-gtk3 et de libadwaita -> Mocha ; ombres et filets en crust, aux
 # opacités de libadwaita
 COLORS = {
@@ -59,24 +71,26 @@ COLORS = {
     "warning_bg_color": YELLOW, "warning_fg_color": CRUST, "warning_color": YELLOW,
     "error_bg_color": RED, "error_fg_color": CRUST, "error_color": RED,
     # le cadre en mantle, comme le fond des fenêtres et les barres d'outils des applis Qt
-    "window_bg_color": MANTLE, "window_fg_color": TEXT,
-    "headerbar_bg_color": MANTLE, "headerbar_fg_color": TEXT, "headerbar_border_color": TEXT,
-    "headerbar_backdrop_color": MANTLE, "headerbar_shade_color": alpha(CRUST, 0.36),
+    "window_bg_color": FRAME, "window_fg_color": TEXT,
+    "headerbar_bg_color": FRAME, "headerbar_fg_color": TEXT, "headerbar_border_color": TEXT,
+    "headerbar_backdrop_color": FRAME, "headerbar_shade_color": alpha(CRUST, 0.36),
     "headerbar_darker_shade_color": alpha(CRUST, 0.9),
-    "sidebar_bg_color": MANTLE, "sidebar_fg_color": TEXT, "sidebar_backdrop_color": MANTLE,
+    "sidebar_bg_color": FRAME, "sidebar_fg_color": TEXT, "sidebar_backdrop_color": FRAME,
     "sidebar_shade_color": alpha(CRUST, 0.25), "sidebar_border_color": alpha(CRUST, 0.36),
-    "secondary_sidebar_bg_color": MANTLE, "secondary_sidebar_fg_color": TEXT,
-    "secondary_sidebar_backdrop_color": MANTLE, "secondary_sidebar_shade_color": alpha(CRUST, 0.25),
+    "secondary_sidebar_bg_color": FRAME, "secondary_sidebar_fg_color": TEXT,
+    "secondary_sidebar_backdrop_color": FRAME, "secondary_sidebar_shade_color": alpha(CRUST, 0.25),
     "secondary_sidebar_border_color": alpha(CRUST, 0.36),
-    "dialog_bg_color": MANTLE, "dialog_fg_color": TEXT,
+    "dialog_bg_color": FRAME, "dialog_fg_color": TEXT,
     # le contenu en base : vues, listes encadrées (comme les cartes de Kirigami), vignettes
-    "view_bg_color": BASE, "view_fg_color": TEXT,
-    "card_bg_color": BASE, "card_fg_color": TEXT, "card_shade_color": alpha(CRUST, 0.36),
+    "view_bg_color": alpha(BASE, VIEW_ALPHA), "view_fg_color": TEXT,
+    "card_bg_color": alpha(BASE, VIEW_ALPHA), "card_fg_color": TEXT, "card_shade_color": alpha(CRUST, 0.36),
     "thumbnail_bg_color": BASE, "thumbnail_fg_color": TEXT,
     # popups en base, comme ceux de Plasma et les menus des applis Qt
     "popover_bg_color": BASE, "popover_fg_color": TEXT, "popover_shade_color": alpha(CRUST, 0.25),
     "shade_color": alpha(CRUST, 0.25), "scrollbar_outline_color": alpha(CRUST, 0.95),
 }
+# les couleurs translucides : le cadre et les vues
+TRANSLUCENT = [name for name, value in COLORS.items() if value in (FRAME, alpha(BASE, VIEW_ALPHA))]
 SELECTION_BACKDROP = mix(TEAL, BASE, 0.4)  # fenêtre inactive : le teal adouci de Kvantum
 # Action suggérée : le bouton par défaut de Kvantum, un bouton voilé de teal à 25 %, texte clair
 # (Kvantum n'a pas de couleur de texte pour le bouton par défaut : un teal plein y serait illisible)
@@ -312,6 +326,8 @@ def gtk4_css(adw):
            "   Imported by the GTK 4 theme, and by ~/.config/gtk-4.0/gtk.css for libadwaita apps. */\n"]
     out.append("@media (prefers-color-scheme: dark) {\n")
     out += [f"@define-color {name} {value};\n" for name, value in COLORS.items()]
+    out.append("\n/* the translucent frame and views, as variables too (libadwaita's own) */\n")
+    out.append(rule([":root"], *(f"--{name.replace('_', '-')}: {COLORS[name]}" for name in TRANSLUCENT)))
     out.append("\n/* libadwaita takes the system's accent, rounded to one of its own */\n")
     out.append(rule([":root"], f"--accent-bg-color: {TEAL}", f"--accent-fg-color: {CRUST}"))
     out.append("\n/* selections: teal with dark text, as in KDE apps; softer in inactive windows */\n")
@@ -352,6 +368,23 @@ def gtk4_css(adw):
     return "".join(out)
 
 
+def blur_css():
+    """GTK 3 windows that KWin blurs (gtk/lagoonblur.c loads this sheet, above the theme): the
+    frame at BLUR_FRAME_ALPHA, like Qt windows. The bars that paint the frame's color over the
+    window's own background let it show through instead, as Kvantum's toolbars do: on top of it,
+    translucent, they would make darker bands."""
+    # GTK 3 resolves a sheet's named colors within that sheet: redefined here, they would not
+    # reach the theme's rules. The window backgrounds are set directly instead.
+    out = ["/* Lagoon: GTK 3 windows blurred by KWin (loaded by liblagoonbuttons.so, gtk/lagoonblur.c) */\n"]
+    out.append(rule(["window.background:not(.popup)", "dialog.background", "messagedialog.background",
+                     "assistant.background"], f"background-color: {alpha(MANTLE, BLUR_FRAME_ALPHA)}"))
+    out.append(rule(["headerbar", ".titlebar:not(headerbar)", "toolbar:not(.osd)", ".toolbar", ".primary-toolbar",
+                     ".inline-toolbar", "searchbar > revealer > box", ".location-bar", "notebook > header",
+                     "menubar", ".menubar", ".sidebar", "paned > separator.wide", "tabbar .box"],
+                    "background-color: transparent"))
+    return "".join(out)
+
+
 INDEX = """[Desktop Entry]
 Type=X-GNOME-Metatheme
 Name={name}
@@ -377,6 +410,7 @@ def main():
     gtk3 = dst / "gtk-3.0" / "gtk.css"
     adw = qt_button_tones(accent_text(suggested_veil(gtk3.read_text())))
     gtk3.write_text(adw + gtk3_css(adw))
+    (dst / "gtk-3.0" / "lagoon-blur.css").write_text(blur_css())
     # GTK 4 sans libadwaita : la feuille de libadwaita d'adw-gtk3, ses retouches, puis les nôtres
     (dst / "gtk-4.0" / "lagoon.css").write_text(gtk4_css((src / "gtk-4.0" / "libadwaita.css").read_text()))
     (dst / "gtk-4.0" / "gtk.css").write_text(

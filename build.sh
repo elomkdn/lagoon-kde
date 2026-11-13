@@ -4,7 +4,8 @@
 #
 # Installe dans ~/.local/share, ou dans $DEST si défini (ex. : DEST=dist/share ./build.sh).
 # Nécessite librsvg et python3, sans module à installer. Avec un compilateur C et les en-têtes
-# de GTK 3, les boutons de fenêtre des applis GTK 3 s'allument ensemble ; sans, un par un. Avec
+# de GTK 3, les boutons de fenêtre des applis GTK 3 s'allument ensemble ; sans, un par un ; avec
+# wayland-scanner en plus, KWin floute derrière leurs fenêtres, comme derrière celles de Qt. Avec
 # un compilateur C++ et ceux de Qt 6, le panneau Emplacements de KIO garde un texte lisible.
 set -euo pipefail
 
@@ -28,11 +29,29 @@ python3 -I "$HERE/plasma/desktoptheme/build-translucent.py" "$HERE/plasma/deskto
 # --- Thème GTK : le style de libadwaita (adw-gtk3) aux couleurs de Catppuccin Mocha, accent teal ;
 # les applis libadwaita lisent la même palette (gtk-4.0/lagoon.css, voir install.sh) ---
 python3 -I "$HERE/gtk/build-gtk.py" "$HERE/vendor/adw-gtk3" "$DATA/themes" Lagoon
-# --- Module GTK 3 (optionnel) : les boutons de fenêtre s'allument ensemble, voir gtk/lagoonbuttons.c ---
+# --- Module GTK 3 (optionnel) : les boutons de fenêtre s'allument ensemble, voir gtk/lagoonbuttons.c ;
+# avec wayland-scanner, il demande aussi à KWin de flouter derrière les fenêtres (gtk/lagoonblur.c) ---
 if command -v cc >/dev/null && pkg-config --exists gtk+-3.0 2>/dev/null; then
+  gtk_build=$(mktemp -d)
+  blur=()
+  if command -v wayland-scanner >/dev/null && pkg-config --exists wayland-client 2>/dev/null; then
+    blur=(-DLAGOON_BLUR -I"$gtk_build" "$HERE/gtk/lagoonblur.c")
+    for xml in plasma-wayland-protocols/blur wayland-protocols/ext-background-effect-v1; do
+      p=$(basename "$xml")
+      wayland-scanner client-header "$HERE/vendor/$xml.xml" "$gtk_build/$p-client-protocol.h"
+      wayland-scanner private-code "$HERE/vendor/$xml.xml" "$gtk_build/$p-protocol.c"
+      blur+=("$gtk_build/$p-protocol.c")
+    done
+    # shellcheck disable=SC2207  # les options de pkg-config sont à découper
+    blur+=(-lm
+          $(pkg-config --cflags --libs wayland-client))
+  else
+    echo "Pas de wayland-scanner : les applis GTK 3 ne seront pas floutées" >&2
+  fi
   # shellcheck disable=SC2046  # les options de pkg-config sont à découper
   cc -shared -fPIC -O2 -Wall -o "$DATA/themes/Lagoon/gtk-3.0/liblagoonbuttons.so" \
-    "$HERE/gtk/lagoonbuttons.c" $(pkg-config --cflags --libs gtk+-3.0)
+    "$HERE/gtk/lagoonbuttons.c" "${blur[@]}" $(pkg-config --cflags --libs gtk+-3.0)
+  rm -rf "$gtk_build"
 else
   echo "Pas de compilateur C ou d'en-têtes GTK 3 : les boutons des applis GTK 3 réagiront un par un" >&2
 fi
