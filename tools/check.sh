@@ -93,6 +93,8 @@ done
 expect "sans --apply, les icônes de l'utilisateur restent" test "$(read_key kdeglobals Icons Theme)" = Papirus-Dark
 expect "sans --apply, le profil du terminal reste" test -z "$(read_key konsolerc "Desktop Entry" DefaultProfile)"
 expect "ce qui était là avant est noté" grep -qx cursors "$C/lagoon/kept"
+expect "les curseurs retouchés sont là, avec leurs liens" sh -c "test -L '$D/icons/Teal-cursors/cursors/left_ptr' && test -s '$D/icons/Teal-cursors/cursors/left_ptr' && test -L '$D/icons/Teal-cursors/cursors_scalable/left_ptr' && test -s '$D/icons/Teal-cursors/cursors_scalable/default/default.svg'"
+expect "les curseurs Catppuccin d'avant ne sont pas touchés" test -d "$D/icons/catppuccin-mocha-teal-cursors"
 expect "le thème Kvantum est choisi, l'ancien gardé" test "$(read_key "$C/Kvantum/kvantum.kvconfig" General theme)$(read_key "$C/Kvantum/kvantum.kvconfig.bak" General theme)" = LagoonKvArc
 expect "le thème GTK est choisi" grep -qx "gtk-theme-name=Lagoon" "$C/gtk-3.0/settings.ini"
 expect "les applis libadwaita lisent la palette" grep -q "/themes/Lagoon/gtk-4.0/lagoon.css" "$C/gtk-4.0/gtk.css"
@@ -113,7 +115,7 @@ fi
 echo "Désinstallation"
 if (cd "$WORK" && run ./rel/uninstall.sh) > "$WORK/uninstall.log" 2>&1; then ok "le désinstalleur va au bout"; else cat "$WORK/uninstall.log" >&2; bad "le désinstalleur"; fi
 for part in plasma/look-and-feel/Lagoon plasma/desktoptheme/Lagoon themes/Lagoon wallpapers/Lagoon konsole/Lagoon.colorscheme \
-            plasma/plasmoids/com.github.elomkdn.tealpill aurorae/themes/CatppuccinMocha-Classic; do
+            plasma/plasmoids/com.github.elomkdn.tealpill aurorae/themes/CatppuccinMocha-Classic icons/Teal-cursors; do
   [ ! -e "$D/$part" ] || bad "il reste $part"
 done
 expect "les curseurs d'avant restent" test -d "$D/icons/catppuccin-mocha-teal-cursors"

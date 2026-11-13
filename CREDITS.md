@@ -15,7 +15,7 @@ component below.
 | [Teal](https://github.com/elomkdn/teal-icons) | The icon theme, included in the release archive (from a clone, downloaded from its release); made from Adwair (kusaida) and Papirus (Papirus Development Team) | Elom, kusaida, Papirus Development Team | GPL-3.0 |
 | [Teal Pill](https://github.com/elomkdn/teal-pill) | The top bar's music island, included (`vendor/teal-pill`, a copy of its repository's `package/` and `po/`); itself based on PlasMusic Toolbar by Claudio Catterina | Elom, Claudio Catterina | GPL-3.0-or-later |
 | [Catppuccin palette](https://github.com/catppuccin/palette) | Mocha colors | Catppuccin | MIT |
-| [Catppuccin cursors](https://github.com/catppuccin/cursors) v2.0.0 | Mocha Teal cursors, included unmodified (`vendor/catppuccin-cursors`) as a separate work, based on Volantes Cursors by Alexey Varfolomeev | Catppuccin | GPL-2.0 |
+| [Catppuccin cursors](https://github.com/catppuccin/cursors) v2.0.0 | Mocha Teal cursors (`vendor/catppuccin-cursors`), based on Volantes Cursors by Alexey Varfolomeev; retouched by `icons/build-cursors.py` (thicker outline, gradient, a rounded arrow of Lagoon's own drawing) | Catppuccin | GPL-2.0 |
 
 The wallpaper (`wallpapers/make-wallpaper.py`) is an original drawing inspired by
 the official CachyOS wallpaper. Because it contains the CachyOS logo, whose package
@@ -23,8 +23,8 @@ declares GPL-1.0-only (not compatible with GPL-3.0), the generated images that
 contain the logo (wallpaper, splash screen logo) are distributed separately under
 GPL-1.0-only, as an aggregate with the rest of the theme. The CachyOS name and logo are trademarks of the CachyOS project.
 
-The Catppuccin cursors are GPL-2.0: they are included unmodified, as a separate work
-aggregated with the theme, under their own license (`LICENSE` in their archive).
+The Catppuccin cursors are GPL-2.0: retouched, they remain a separate work aggregated with
+the theme, under their own license (`LICENSE`, installed with them).
 
 ## Recommended, not included
 

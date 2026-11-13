@@ -57,10 +57,13 @@ python3 -I "$HERE/kvantum/build-kvantum.py" "$HERE/vendor/kvlibadwaita" \
   "$DATA/themes/Lagoon/Kvantum" Lagoon
 
 
-# --- Curseurs : Catppuccin Mocha Teal (v2.0.0, GPL-2.0), tels quels ---
-rm -rf "$DATA/icons/catppuccin-mocha-teal-cursors"
-python3 -I -c 'import sys, zipfile; zipfile.ZipFile(sys.argv[1]).extractall(sys.argv[2])' \
-  "$HERE/vendor/catppuccin-cursors/catppuccin-mocha-teal-cursors.zip" "$DATA/icons"
+# --- Curseurs Teal : Catppuccin Mocha Teal (v2.0.0, GPL-2.0), retouchés par icons/build-cursors.py :
+# contour plus épais, dégradé, flèche arrondie ---
+rm -rf "$DATA/icons/Teal-cursors"
+mkdir -p "$DATA/icons"
+cp -r "$HERE/icons/Teal-cursors" "$DATA/icons/Teal-cursors"
+python3 -I "$HERE/icons/build-cursors.py" \
+  "$HERE/vendor/catppuccin-cursors/catppuccin-mocha-teal-cursors.zip" "$DATA/icons/Teal-cursors"
 
 # --- Icône du lanceur : le logo CachyOS sans tuile, dans hicolor pour rester là avec --no-icons ---
 mkdir -p "$DATA/icons/hicolor/scalable/apps"

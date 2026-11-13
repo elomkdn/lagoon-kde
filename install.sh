@@ -144,7 +144,7 @@ fi
 PARTS=(
   plasma/look-and-feel/Lagoon                               # global theme (layout, splash)
   plasma/desktoptheme/Lagoon                                # Plasma theme
-  icons/catppuccin-mocha-teal-cursors                       # cursors (Catppuccin Mocha Teal)
+  icons/Teal-cursors                                        # Teal, the cursors (Catppuccin's, retouched)
   color-schemes/Lagoon.colors                               # color scheme
   aurorae/themes/CatppuccinMocha-Classic                    # window decoration
   themes/$THEME                                             # GTK theme
@@ -167,9 +167,18 @@ copy_parts() {
   done
   rm -rf "${DATA:?}/wallpapers/Lagoon-Glow"  # a wallpaper of earlier versions
   # the cursor page of System Settings looks in ~/.icons, not in ~/.local/share/icons
-  if [ "$DATA" = "$HOME/.local/share" ] && [ ! -e "$HOME/.icons/catppuccin-mocha-teal-cursors" ]; then
+  if [ "$DATA" = "$HOME/.local/share" ] && [ ! -e "$HOME/.icons/Teal-cursors" ]; then
     mkdir -p "$HOME/.icons"
-    ln -s "$DATA/icons/catppuccin-mocha-teal-cursors" "$HOME/.icons/catppuccin-mocha-teal-cursors"
+    ln -s "$DATA/icons/Teal-cursors" "$HOME/.icons/Teal-cursors"
+  fi
+  # Catppuccin's cursors as they come, which earlier versions installed, unless they were there
+  # before Lagoon: the retouched ones take their place
+  if ! grep -qsx cursors "$KEPT"; then
+    rm -rf "${DATA:?}/icons/catppuccin-mocha-teal-cursors"
+    if [ -L "$HOME/.icons/catppuccin-mocha-teal-cursors" ]; then rm -f "$HOME/.icons/catppuccin-mocha-teal-cursors"; fi
+    if [ "$(kreadconfig6 --file kcminputrc --group Mouse --key cursorTheme 2>/dev/null)" = catppuccin-mocha-teal-cursors ]; then
+      kwriteconfig6 --file kcminputrc --group Mouse --key cursorTheme Teal-cursors
+    fi
   fi
 }
 step "Installing the theme, its wallpapers and Teal Pill" copy_parts

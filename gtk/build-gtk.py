@@ -360,7 +360,7 @@ Encoding=UTF-8
 
 [X-GNOME-Metatheme]
 GtkTheme={name}
-CursorTheme=catppuccin-mocha-teal-cursors
+CursorTheme=Teal-cursors
 ButtonLayout=close,minimize,maximize:
 """
 

@@ -38,7 +38,8 @@ everything in one download.
 - **Icons**: [Teal](https://github.com/elomkdn/teal-icons), included and selected by default:
   app icons in Catppuccin colors, the apps' own logos, Papirus's system icons. To
   keep yours, install with `--no-icons`.
-- **Cursors**: Catppuccin Mocha Teal, included.
+- **Cursors**: Teal, included: Catppuccin Mocha Teal's cursors with a thicker outline, a
+  gradient from foam to sapphire and a rounded arrow, so that they show even on the teal accent.
 
 ![Teal, the icon theme that comes with Lagoon](screenshots/teal-icons.png)
 
@@ -104,7 +105,7 @@ everything in one download.
 
 It removes Lagoon, Teal Pill and the Teal icons, and the settings the installer made: the
 GTK theme and its window-buttons module, the Qt plugin for the Places panel, Flatpak apps' access to it, Kvantum's and Klassy's configurations (the ones you
-had before come back) and Lagoon's Klassy preset, the terminal's profile, Firefox's dots. Catppuccin's cursors and window decoration stay if you
+had before come back) and Lagoon's Klassy preset, the terminal's profile, Firefox's dots. Catppuccin's cursors (as they come) and window decoration stay if you
 had them before Lagoon. If Lagoon is in use, Plasma first goes back to Breeze Dark; your
 panels stay.
 

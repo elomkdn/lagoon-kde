@@ -94,10 +94,12 @@ remove_lagoon() {
       plasma/layout-templates/com.github.elomkdn.lagoon.topbar \
       plasma/plasmoids/com.github.elomkdn.tealpill plasma/plasmoids/com.github.elomkdn.lagoon.title \
       icons/Teal icons/Teal-Papirus icons/Teal-Settings \
-      icons/hicolor/scalable/apps/lagoon-launcher.svg; do
+      icons/hicolor/scalable/apps/lagoon-launcher.svg icons/Teal-cursors; do
     rm -rf "${DATA:?}/$part"
   done
-  # the cursors and the window decoration are Catppuccin's: they stay if they were there before
+  if [ -L "$HOME/.icons/Teal-cursors" ]; then rm -f "$HOME/.icons/Teal-cursors"; fi
+  # Catppuccin's cursors as they come (installed by earlier versions) and window decoration: they
+  # stay if they were there before
   if ! kept cursors; then
     rm -rf "${DATA:?}/icons/catppuccin-mocha-teal-cursors"
     [ -L "$HOME/.icons/catppuccin-mocha-teal-cursors" ] && rm -f "$HOME/.icons/catppuccin-mocha-teal-cursors"
