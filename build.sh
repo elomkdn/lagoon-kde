@@ -129,6 +129,8 @@ sed -e 's/^Name=.*/Name=Lagoon/' "$SRC_CATPPUCCIN/CatppuccinMochaTeal.colors" > 
 mkdir -p "$DATA/aurorae/themes"
 rm -rf "$DATA/aurorae/themes/CatppuccinMocha-Classic"
 cp -r "$SRC_CATPPUCCIN/CatppuccinMocha-Classic" "$DATA/aurorae/themes/"
+# sa licence (MIT, celle du jeu de couleurs aussi) voyage avec lui
+cp "$SRC_CATPPUCCIN/LICENSE" "$DATA/aurorae/themes/CatppuccinMocha-Classic/"
 
 # --- Thème global ---
 # plasma/look-and-feel/Lagoon : ses métadonnées, ses réglages (defaults), le splash et les aperçus ;

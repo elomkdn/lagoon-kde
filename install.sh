@@ -359,13 +359,17 @@ fi
 add_klassy_preset() {
   local preset=$WORK/Lagoon.klpw version
   # a command-line tool, but a Qt app: offscreen, it needs no screen
-  version=$(QT_QPA_PLATFORM=offscreen klassy-settings --version | awk '{print $NF}')
+  version=$(QT_QPA_PLATFORM=offscreen timeout 30 klassy-settings --version | awk '{print $NF}')
+  [ -n "$version" ] || return 1
   { printf '[Klassy Window Decoration Preset File]\nversion=%s\n\n[Windeco Preset Lagoon]\n' "$version"
     grep -v -e '^\[' -e '^$' "$HERE/extras/klassy/klassyrc"; } > "$preset"
-  QT_QPA_PLATFORM=offscreen klassy-settings --import-preset "$preset"
+  QT_QPA_PLATFORM=offscreen timeout 30 klassy-settings --import-preset "$preset"
 }
+# a convenience: if Klassy refuses it (another version, a crash), the install goes on
 if [ "$klassy" != no ] && klassy_installed && command -v klassy-settings >/dev/null; then
-  step "Adding Lagoon to Klassy's presets" add_klassy_preset
+  if ! (step "Adding Lagoon to Klassy's presets" add_klassy_preset); then
+    note "Lagoon could not be added to Klassy's presets: the rest of the install is not affected."
+  fi
 fi
 
 # Firefox draws its window buttons itself, out of reach of GTK themes: a userChrome.css gives
