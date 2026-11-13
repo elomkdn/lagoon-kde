@@ -345,6 +345,20 @@ if [ "$klassy" = yes ]; then
   step "Selecting Klassy, rounded windows (15 px)" set_klassy ours
 fi
 
+# Lagoon among Klassy's presets as well, to come back to it after changing a setting (Klassy's
+# settings > Presets > Lagoon > Load): klassyrc's settings, in Klassy's preset file format
+add_klassy_preset() {
+  local preset=$WORK/Lagoon.klpw version
+  # a command-line tool, but a Qt app: offscreen, it needs no screen
+  version=$(QT_QPA_PLATFORM=offscreen klassy-settings --version | awk '{print $NF}')
+  { printf '[Klassy Window Decoration Preset File]\nversion=%s\n\n[Windeco Preset Lagoon]\n' "$version"
+    grep -v -e '^\[' -e '^$' "$HERE/extras/klassy/klassyrc"; } > "$preset"
+  QT_QPA_PLATFORM=offscreen klassy-settings --import-preset "$preset"
+}
+if [ "$klassy" != no ] && klassy_installed && command -v klassy-settings >/dev/null; then
+  step "Adding Lagoon to Klassy's presets" add_klassy_preset
+fi
+
 # Firefox draws its window buttons itself, out of reach of GTK themes: a userChrome.css gives
 # them the dots (Firefox reads it once toolkit.legacyUserProfileCustomizations.stylesheets is set)
 set_firefox() {

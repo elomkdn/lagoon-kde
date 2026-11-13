@@ -104,7 +104,7 @@ everything in one download.
 
 It removes Lagoon, Teal Pill and the Teal icons, and the settings the installer made: the
 GTK theme and its window-buttons module, the Qt plugin for the Places panel, Flatpak apps' access to it, Kvantum's and Klassy's configurations (the ones you
-had before come back), the terminal's profile, Firefox's dots. Catppuccin's cursors and window decoration stay if you
+had before come back) and Lagoon's Klassy preset, the terminal's profile, Firefox's dots. Catppuccin's cursors and window decoration stay if you
 had them before Lagoon. If Lagoon is in use, Plasma first goes back to Breeze Dark; your
 panels stay.
 
@@ -151,6 +151,9 @@ configuration of your own is kept; to take Lagoon's instead (yours is kept as
 ```sh
 ./install.sh --klassy
 ```
+
+The installer also adds Lagoon to Klassy's presets: after changing a setting, Klassy's
+settings > Presets > Lagoon > Load brings Lagoon's configuration back.
 
 Applying the global theme from System Settings selects the Catppuccin decoration again, since
 it has to work without Klassy: `./install.sh --apply` brings the rounded windows back.

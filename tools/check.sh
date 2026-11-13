@@ -74,6 +74,7 @@ read_key() { run kreadconfig6 --file "$1" --group "$2" --key "$3" 2>/dev/null; }
 run kwriteconfig6 --file kdeglobals --group Icons --key Theme Papirus-Dark
 printf '[General]\ntheme=KvArc\n' > "$C/Kvantum/kvantum.kvconfig"
 printf '[Windeco]\nMine=1\n' > "$C/klassy/klassyrc"
+printf '[Windeco Preset Mine]\nWindowCornerRadius=3\n' > "$C/klassy/windecopresetsrc"
 printf 'Net/ThemeName "Breeze"\nNet/IconThemeName "x"\n' > "$C/xsettingsd/xsettingsd.conf"
 printf '[Context]\nfilesystems=~/Games;xdg-data/themes:ro;\n' > "$D/flatpak/overrides/global"
 printf '[Profile0]\nPath=abc.default\nIsRelative=1\n' > "$H/.mozilla/firefox/profiles.ini"
@@ -99,6 +100,12 @@ expect "les applis GTK 3 chargent le module des boutons" grep -q "themes/Lagoon/
 expect "les applis Qt chargent le plugin du panneau Emplacements" grep -q "themes/Lagoon/qt6" "$C/plasma-workspace/env/lagoon-qt.sh"
 expect "Firefox lit les pastilles" grep -q "// Lagoon" "$H/.mozilla/firefox/abc.default/user.js"
 expect "la configuration Klassy de l'utilisateur reste" grep -qx "Mine=1" "$C/klassy/klassyrc"
+klassy=false
+ls /usr/lib*/qt6/plugins/org.kde.kdecoration3/org.kde.klassy.so >/dev/null 2>&1 && command -v klassy-settings >/dev/null && klassy=true
+if $klassy; then
+  expect "Lagoon est parmi les préréglages Klassy" grep -qx "\[Windeco Preset Lagoon\]" "$C/klassy/windecopresetsrc"
+  expect "le préréglage a les réglages de Lagoon" sh -c "grep -A200 -x '\[Windeco Preset Lagoon\]' '$C/klassy/windecopresetsrc' | grep -qx WindowCornerRadius=15"
+fi
 if command -v flatpak >/dev/null; then
   expect "les applis Flatpak voient le thème" grep -q "xdg-config/gtk-4.0:ro" "$D/flatpak/overrides/global"
 fi
@@ -116,6 +123,9 @@ expect "celui de l'installeur est retiré" sh -c "! grep -q 'xdg-config/gtk-4.0'
 expect "la configuration Kvantum d'avant revient" test "$(read_key "$C/Kvantum/kvantum.kvconfig" General theme)" = KvArc
 expect "sa copie de secours est retirée" test ! -e "$C/Kvantum/kvantum.kvconfig.bak"
 expect "la configuration Klassy de l'utilisateur reste" grep -qx "Mine=1" "$C/klassy/klassyrc"
+if $klassy; then
+  expect "le préréglage Lagoon est retiré, les autres restent" sh -c "! grep -q 'Preset Lagoon' '$C/klassy/windecopresetsrc' && grep -qx '\[Windeco Preset Mine\]' '$C/klassy/windecopresetsrc'"
+fi
 expect "Firefox est rendu comme avant" test ! -e "$H/.mozilla/firefox/abc.default/chrome" -a ! -e "$H/.mozilla/firefox/abc.default/user.js"
 expect "xsettingsd revient à Breeze" grep -qx 'Net/ThemeName "Breeze"' "$C/xsettingsd/xsettingsd.conf"
 expect "le thème GTK revient à Breeze" grep -qx "gtk-theme-name=Breeze" "$C/gtk-3.0/settings.ini"

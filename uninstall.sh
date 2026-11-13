@@ -151,6 +151,13 @@ remove_lagoon() {
   if [ -f "$klassy" ] && cmp -s "$klassy" "$HERE/extras/klassy/klassyrc"; then
     if [ -f "$klassy.bak" ]; then mv "$klassy.bak" "$klassy"; else rm -f "$klassy"; fi
   fi
+  # and Lagoon's preset among Klassy's
+  local presets=$CONFIG/klassy/windecopresetsrc
+  if [ -f "$presets" ] && grep -qx '\[Windeco Preset Lagoon\]' "$presets"; then
+    awk '/^\[/ { skip = ($0 == "[Windeco Preset Lagoon]") } !skip' "$presets" > "$presets.new" &&
+      mv "$presets.new" "$presets"
+    grep -q . "$presets" || rm -f "$presets"
+  fi
   # Firefox's dots, and the setting that made it read them if nothing else needs it
   for ini in "$CONFIG/mozilla/firefox/profiles.ini" "$HOME/.mozilla/firefox/profiles.ini"; do
     [ -f "$ini" ] || continue
