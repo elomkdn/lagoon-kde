@@ -67,14 +67,65 @@ QtObject {
         return list;
     }
 
-    function show(kind, icon, level, text, duration = 1800) {
-        flash = { kind: kind, icon: icon, level: level, text: text };
-        flashTimer.interval = duration;
+    // News from a source (the charger, headphones, the power profile, the snapshot): what() makes
+    // the event as things stand when its turn comes, or null when it no longer applies (the
+    // setting was turned off meanwhile). One piece of news per source: a newer one replaces it,
+    // on show or waiting.
+    property var waiting: []
+    // the news on show: its source, and when it started and ends (ms)
+    property var current: null
+    // once another source waits, the event on show gives way after this long
+    readonly property int glance: 1200
+
+    function show(source, what, duration = 1800) {
+        const news = { source: source, what: what, duration: duration };
+        if (current === null || current.source === source) {
+            begin(news);
+            return;
+        }
+        const turn = waiting.findIndex(x => x.source === source);
+        waiting = turn < 0 ? waiting.concat([news]) : waiting.map((x, i) => i === turn ? news : x);
+        giveWay();
+    }
+
+    function begin(news) {
+        const event = news.what();
+        if (!event) {
+            next();
+            return;
+        }
+        const now = Date.now();
+        current = { source: news.source, since: now, ends: now + news.duration };
+        flash = event;
+        flashTimer.interval = news.duration;
         flashTimer.restart();
+        if (waiting.length > 0) {
+            giveWay();
+        }
+    }
+
+    function giveWay() {
+        const ends = Math.min(current.ends, current.since + glance);
+        if (ends < current.ends) {
+            current.ends = ends;
+            flashTimer.interval = Math.max(1, ends - Date.now());
+            flashTimer.restart();
+        }
+    }
+
+    function next() {
+        if (waiting.length > 0) {
+            const news = waiting[0];
+            waiting = waiting.slice(1);
+            begin(news);
+        } else {
+            current = null;
+            flash = null;
+        }
     }
 
     property Timer flashTimer: Timer {
-        onTriggered: activities.flash = null
+        onTriggered: activities.next()
     }
 
     // nothing shows while the session starts: headphones reconnect, services come up. And each
@@ -105,9 +156,20 @@ QtObject {
             const first = !pluggedInKnown;
             pluggedInKnown = true;
             if (!first && activities.settled && hasBattery) {
-                activities.show(pluggedIn ? "charging" : "battery",
-                                activities.icon(pluggedIn ? "battery-charging" : "battery"), percent / 100, percent + " %");
+                activities.show("battery", () => activities.power.event());
             }
+        }
+        // plugged in or not, and the percentage, as they are now
+        function event() {
+            if (pluggedIn === undefined) {
+                return null;
+            }
+            return {
+                kind: pluggedIn ? "charging" : "battery",
+                icon: activities.icon(pluggedIn ? "battery-charging" : "battery"),
+                level: percent / 100,
+                text: percent + " %",
+            };
         }
     }
 
@@ -123,11 +185,12 @@ QtObject {
             if (!activities.settled) {
                 return;
             }
-            if (battery >= 0) {
-                activities.show("bluetooth", icon, battery / 100, battery + " %");
-            } else {
-                activities.show("bluetooth", icon, -1, name);
-            }
+            activities.show("bluetooth", () => !activities.bluetooth.item ? null : {
+                kind: "bluetooth",
+                icon: icon,
+                level: battery >= 0 ? battery / 100 : -1,
+                text: battery >= 0 ? battery + " %" : name,
+            });
         }
     }
 
@@ -149,10 +212,18 @@ QtObject {
             if (first || !activities.settled) {
                 return;
             }
-            switch (profile) {
-            case "performance": activities.show("profile", activities.icon("performance"), -1, i18n("Performance")); break;
-            case "balanced": activities.show("profile", activities.icon("balanced"), -1, i18n("Balanced")); break;
-            case "power-saver": activities.show("profile", activities.icon("powersave"), -1, i18n("Power save")); break;
+            const shown = {
+                "performance": ["performance", i18n("Performance")],
+                "balanced": ["balanced", i18n("Balanced")],
+                "power-saver": ["powersave", i18n("Power save")],
+            }[profile];
+            if (shown) {
+                activities.show("profile", () => !activities.powerProfile.item ? null : {
+                    kind: "profile",
+                    icon: activities.icon(shown[0]),
+                    level: -1,
+                    text: shown[1],
+                });
             }
         }
     }
@@ -174,7 +245,12 @@ QtObject {
 
     function warnOfSnapshot() {
         if (snapshot && settled) {
-            show("snapshot", activities.icon("snapshot"), -1, i18n("Started from a snapshot"), 6000);
+            show("snapshot", () => !activities.snapshot ? null : {
+                kind: "snapshot",
+                icon: activities.icon("snapshot"),
+                level: -1,
+                text: i18n("Started from a snapshot"),
+            }, 6000);
         }
     }
 

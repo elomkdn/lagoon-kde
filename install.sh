@@ -331,12 +331,29 @@ fi
 
 klassy_installed() { ls /usr/lib*/qt6/plugins/org.kde.kdecoration3/org.kde.klassy.so >/dev/null 2>&1; }
 
+# Lagoon's Klassy configuration: this one, the one Lagoon last wrote (a copy is kept in
+# ~/.config/lagoon), or one an earlier Lagoon wrote (extras/klassy/earlier.sha256). A
+# configuration changed since is the user's.
+LAGOON_KLASSYRC=$CONFIG/lagoon/klassyrc
+is_lagoon_klassyrc() {
+  local rc=$1
+  cmp -s "$rc" "$HERE/extras/klassy/klassyrc" && return 0
+  [ -f "$LAGOON_KLASSYRC" ] && cmp -s "$rc" "$LAGOON_KLASSYRC" && return 0
+  grep -qx "$(sha256sum < "$rc" | cut -d' ' -f1)" "$HERE/extras/klassy/earlier.sha256" 2>/dev/null
+}
+
+write_klassyrc() {
+  local rc=$CONFIG/klassy/klassyrc
+  mkdir -p "$(dirname "$rc")" "$(dirname "$LAGOON_KLASSYRC")"
+  cp "$HERE/extras/klassy/klassyrc" "$rc"
+  cp "$HERE/extras/klassy/klassyrc" "$LAGOON_KLASSYRC"
+}
+
 set_klassy() { # "ours": Lagoon's configuration even over one of the user's, which is kept as .bak
   local rc=$CONFIG/klassy/klassyrc
   if [ "${1:-}" = ours ] || [ ! -f "$rc" ]; then
-    mkdir -p "$(dirname "$rc")"
-    [ -f "$rc" ] && [ ! -f "$rc.bak" ] && cp "$rc" "$rc.bak"
-    cp "$HERE/extras/klassy/klassyrc" "$rc"
+    [ -f "$rc" ] && [ ! -f "$rc.bak" ] && ! is_lagoon_klassyrc "$rc" && cp "$rc" "$rc.bak"
+    write_klassyrc
   fi
   kwriteconfig6 --file kwinrc --group org.kde.kdecoration2 --key library org.kde.klassy
   kwriteconfig6 --file kwinrc --group org.kde.kdecoration2 --key theme Klassy
@@ -346,6 +363,21 @@ set_klassy() { # "ours": Lagoon's configuration even over one of the user's, whi
   kwriteconfig6 --file kwinrc --group org.kde.kdecoration2 --key ButtonsOnRight EHFSM
   qdbus6 org.kde.KWin /KWin reconfigure 2>/dev/null || true
 }
+# a configuration from an earlier Lagoon, unchanged since, becomes this version's
+refresh_klassy() {
+  write_klassyrc
+  qdbus6 org.kde.KWin /KWin reconfigure 2>/dev/null || true
+}
+if [ "$klassy" != no ] && [ -f "$CONFIG/klassy/klassyrc" ] && is_lagoon_klassyrc "$CONFIG/klassy/klassyrc"; then
+  if ! cmp -s "$CONFIG/klassy/klassyrc" "$HERE/extras/klassy/klassyrc"; then
+    step "Updating Lagoon's Klassy configuration" refresh_klassy
+  elif ! cmp -s "$LAGOON_KLASSYRC" "$HERE/extras/klassy/klassyrc"; then
+    # already this version: its copy, to recognise it once a later Lagoon changes it
+    mkdir -p "$(dirname "$LAGOON_KLASSYRC")"
+    cp "$HERE/extras/klassy/klassyrc" "$LAGOON_KLASSYRC"
+  fi
+fi
+
 if [ "$klassy" = yes ]; then
   if ! klassy_installed; then
     echo "Klassy is not installed: install it first (https://github.com/paulmcauley/klassy)" >&2

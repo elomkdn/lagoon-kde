@@ -167,6 +167,13 @@ settings > Presets > Lagoon > Load brings Lagoon's configuration back.
 Applying the global theme from System Settings selects the Catppuccin decoration again, since
 it has to work without Klassy: `./install.sh --apply` brings the rounded windows back.
 
+Some apps draw their own title bar instead of the decoration. Two of them can be told
+to use it:
+
+- **Telegram**: Settings > Advanced > *Use system window frame*.
+- **ONLYOFFICE**: Settings on the start page > the option to use the system title bar,
+  then restart ONLYOFFICE.
+
 ## License
 
 [GPL-3.0-or-later](LICENSE). This theme builds on the work of CachyOS, Catppuccin,

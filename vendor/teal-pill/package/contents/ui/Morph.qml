@@ -2,6 +2,7 @@ import QtQuick
 import org.kde.kirigami as Kirigami
 import "components"
 import "code/catppuccin.js" as Catppuccin
+import "code/numbers.js" as Numbers
 
 // The card coming out of the pill: a shape in the pill's crust that buds from its edge and opens
 // just beyond it, leaving the pill in place to fold it back. A spring drives it, so it can turn
@@ -34,7 +35,6 @@ Item {
 
     readonly property real shown: Math.max(0, progress)
     function mix(from, to) { return from + (to - from) * Math.max(0, progress); }
-    function clamp(value, low, high) { return Math.max(low, Math.min(value, high)); }
 
     readonly property real screenGap: Kirigami.Units.smallSpacing * 2
     readonly property real pillGap: Kirigami.Units.smallSpacing * 2
@@ -49,10 +49,10 @@ Item {
 
     readonly property real cardX: edge === "left" ? anchor.x + anchor.width + pillGap
         : edge === "right" ? anchor.x - pillGap - cardWidth
-        : clamp(anchor.x + (anchor.width - cardWidth) / 2, screenGap, width - cardWidth - screenGap)
+        : Numbers.clamp(anchor.x + (anchor.width - cardWidth) / 2, screenGap, width - cardWidth - screenGap)
     readonly property real cardY: edge === "top" ? anchor.y + anchor.height + pillGap
         : edge === "bottom" ? anchor.y - pillGap - cardHeight
-        : clamp(anchor.y + (anchor.height - cardHeight) / 2, screenGap, height - cardHeight - screenGap)
+        : Numbers.clamp(anchor.y + (anchor.height - cardHeight) / 2, screenGap, height - cardHeight - screenGap)
 
     // the side the card comes from: x and y, each -1, 0 or 1
     readonly property point towardPill: Qt.point(edge === "left" ? -1 : edge === "right" ? 1 : 0,

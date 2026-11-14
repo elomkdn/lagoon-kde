@@ -16,6 +16,16 @@ THEME=Lagoon
 # what install.sh found there before Lagoon, and that stays
 KEPT=$CONFIG/lagoon/kept
 kept() { grep -qsx "$1" "$KEPT"; }
+# Lagoon's Klassy configuration: this one, the one Lagoon last wrote (a copy is kept in
+# ~/.config/lagoon), or one an earlier Lagoon wrote (extras/klassy/earlier.sha256). A
+# configuration changed since is the user's.
+LAGOON_KLASSYRC=$CONFIG/lagoon/klassyrc
+is_lagoon_klassyrc() {
+  local rc=$1
+  cmp -s "$rc" "$HERE/extras/klassy/klassyrc" && return 0
+  [ -f "$LAGOON_KLASSYRC" ] && cmp -s "$rc" "$LAGOON_KLASSYRC" && return 0
+  grep -qx "$(sha256sum < "$rc" | cut -d' ' -f1)" "$HERE/extras/klassy/earlier.sha256" 2>/dev/null
+}
 
 WORK=$(mktemp -d)
 trap 'rm -rf "$WORK"' EXIT
@@ -150,7 +160,7 @@ remove_lagoon() {
   fi
   # Klassy's configuration, if it is still Lagoon's: the one from before comes back
   local klassy=$CONFIG/klassy/klassyrc
-  if [ -f "$klassy" ] && cmp -s "$klassy" "$HERE/extras/klassy/klassyrc"; then
+  if [ -f "$klassy" ] && is_lagoon_klassyrc "$klassy"; then
     if [ -f "$klassy.bak" ]; then mv "$klassy.bak" "$klassy"; else rm -f "$klassy"; fi
   fi
   # and Lagoon's preset among Klassy's

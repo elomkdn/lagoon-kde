@@ -93,8 +93,12 @@ PlasmoidItem {
 
     readonly property bool planar: Plasmoid.formFactor !== PlasmaCore.Types.Horizontal && Plasmoid.formFactor !== PlasmaCore.Types.Vertical
 
+    // the transfers' bubble, from its start until it is back in (IslandCompact.qml): when it
+    // was alone, its way back is still seen
+    property bool bubbleHeld: false
+
     Plasmoid.status: hasMedia || Plasmoid.configuration.showWhenNoMedia
-        || activities.flashing || activities.busy || cardOpen
+        || activities.flashing || activities.busy || bubbleHeld || cardOpen
         ? PlasmaCore.Types.ActiveStatus : PlasmaCore.Types.HiddenStatus
     Plasmoid.icon: "view-media-track"
 
