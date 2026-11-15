@@ -150,8 +150,9 @@ in the corners). The global theme selects it because it needs nothing else insta
 The recommended decoration is [Klassy](https://github.com/paulmcauley/klassy), from the
 AUR (`paru -S klassy`): KWin then rounds the whole window, blur included. A ready-made
 Klassy configuration is included (`extras/klassy/klassyrc`): 15 px corners, matching
-GTK windows and Plasma popups, the same red, yellow and green buttons, a title bar as
-translucent as Qt windows (80 %), a faint outline, and a deeper shadow on the active window.
+GTK windows and Plasma popups, the same red, yellow and green buttons (keep-above, off
+until it is on, then mauve), a title bar as translucent as Qt windows (80 %), a faint
+outline, and a deeper shadow on the active window.
 
 When Klassy is installed, the installer selects it as it applies Lagoon. A Klassy
 configuration of your own is kept; to take Lagoon's instead (yours is kept as
