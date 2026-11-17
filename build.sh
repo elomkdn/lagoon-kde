@@ -22,6 +22,9 @@ rm -rf "$PLASMA"
 mkdir -p "$(dirname "$PLASMA")"
 cp -r "$HERE/plasma/desktoptheme/Lagoon" "$PLASMA"
 
+# Le cadre des tâches : le trait sous les icônes du dock, selon l'état de la fenêtre
+python3 -I "$HERE/plasma/desktoptheme/build-tasks.py" "$PLASMA/widgets/tasks.svg"
+
 # Panneaux, popups et infobulles translucides et floutés quand KWin floute (translucent/),
 # opaques sinon ; solid/ pour les panneaux réglés opaques et leurs popups
 python3 -I "$HERE/plasma/desktoptheme/build-translucent.py" "$HERE/plasma/desktoptheme/Lagoon" "$PLASMA"

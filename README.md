@@ -23,7 +23,10 @@ everything in one download.
   the top bar, the active app's name in bold, then its menus; the window's title is in its
   tooltip. In the middle, [Teal Pill](#teal-pill), included. Its launcher is
   [App Grid](https://appgrid.xarbit.dev) (`plasma6-applets-appgrid` in the AUR) if it is
-  installed when the layout is applied, Plasma's own otherwise.
+  installed when the layout is applied, Plasma's own otherwise. Under each open app, a bar:
+  long for a window on screen, short for a minimized one, teal for the active one, split in
+  two for several windows. To resize the dock, keep its height even (72, 76, 80…): at an odd
+  height, the split falls a pixel off center.
 - **Translucent panels, popups and windows**: the top bar, the dock, popups and tooltips let
   the blurred desktop show through, with smooth rounded corners and no outline. They turn
   opaque when KWin's blur effect is off, or when a panel is set to opaque. Qt apps' windows
