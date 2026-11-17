@@ -1,4 +1,4 @@
-<svg width="144" height="126" version="1.0" viewBox="0 0 144 126" xmlns="http://www.w3.org/2000/svg">
+<svg width="500" height="166" version="1.0" viewBox="0 0 500 166" xmlns="http://www.w3.org/2000/svg">
  <defs id="null">
   <style id="current-color-scheme" type="text/css">.ColorScheme-Text {
         
@@ -68,10 +68,9 @@
   <rect transform="scale(1,-1)" x="34" y="-21" width="1" height="3" fill="none"/>
   <rect class="ColorScheme-ButtonFocus" x="31" y="18" width="3" height="3" opacity="0"/>
  </g>
- <g id="focus-bottom" transform="matrix(-1,0,0,1,36,12)" fill="#94e2d5">
-   <rect transform="scale(1,-1)" x="5" y="-29" width="26" height="3" fill="none"/>
-  <rect class="ColorScheme-ButtonFocus" transform="scale(1,-1)" x="13" y="-28" width="10" height="2"/>
-  <rect class="ColorScheme-ButtonFocus" transform="scale(1,-1)" x="13" y="-29" width="10" height="1"/>
+ <g id="focus-bottom">
+  <rect x="260" y="36" width="72" height="4" fill="none"/>
+  <rect x="282" y="36" width="28" height="4" rx="2" fill="#94e2d5"/>
  </g>
  <g id="focus-bottomleft" transform="matrix(-1,0,0,1,36,20)" opacity="0">
   <rect transform="scale(1,-1)" x="34" y="-21" width="1" height="3" fill="none"/>
@@ -106,10 +105,9 @@
   <rect transform="scale(1,-1)" x="34" y="-21" width="1" height="3" fill="none"/>
   <rect class="ColorScheme-ButtonHover" x="31" y="18" width="3" height="3" fill="currentColor" opacity=".99"/>
  </g>
- <g id="hover-bottom" transform="matrix(-1,0,0,1,36,54)" fill="#94e2d5" opacity=".5">
-   <rect transform="scale(1,-1)" x="5" y="-29" width="26" height="3" fill="none"/>
-  <rect class="ColorScheme-ButtonHover" transform="scale(1,-1)" x="13" y="-28" width="10" height="2" opacity="1"/>
-  <rect class="ColorScheme-ButtonHover" transform="scale(1,-1)" x="13" y="-29" width="10" height="1" opacity="1"/>
+ <g id="hover-bottom" opacity="0.5">
+  <rect x="260" y="68" width="72" height="4" fill="none"/>
+  <rect x="282" y="68" width="28" height="4" rx="2" fill="#94e2d5"/>
  </g>
  <g id="hover-bottomleft" transform="matrix(-1,0,0,1,36,62)" opacity="0">
   <rect transform="scale(1,-1)" x="34" y="-21" width="1" height="3" fill="none"/>
@@ -146,10 +144,9 @@
   <rect transform="scale(1,-1)" x="34" y="-21" width="1" height="3" fill="none"/>
   <rect class="ColorScheme-NeutralText" x="31" y="18" width="3" height="3" fill="currentColor" opacity=".66"/>
  </g>
- <g id="attention-bottom" transform="matrix(-1,0,0,1,36,75)" fill="#ffb54d">
-   <rect transform="scale(1,-1)" x="5" y="-29" width="26" height="3" fill="none"/>
-  <rect class="ColorScheme-NeutralText" transform="scale(1,-1)" x="13" y="-28" width="10" height="2"/>
-  <rect class="ColorScheme-NeutralText" transform="scale(1,-1)" x="13" y="-29" width="10" height="1"/>
+ <g id="attention-bottom">
+  <rect x="260" y="100" width="72" height="4" fill="none"/>
+  <rect x="282" y="100" width="28" height="4" rx="2" fill="#ffb54d"/>
  </g>
  <g id="attention-bottomleft" transform="matrix(-1,0,0,1,36,83)" opacity="0">
   <rect transform="scale(1,-1)" x="34" y="-21" width="1" height="3" fill="none"/>
@@ -185,9 +182,9 @@
   <rect transform="scale(1,-1)" x="34" y="-21" width="1" height="3" fill="none"/>
   <rect class="ColorScheme-ButtonFocus" x="31" y="18" width="3" height="3" opacity="0"/>
  </g>
- <g id="north-focus-top" transform="matrix(-1,0,0,-1,72,51)" fill="#94e2d5">
-  <rect class="ColorScheme-ButtonFocus" transform="scale(1,-1)" x="5" y="-28" width="26" height="2"/>
-  <rect class="ColorScheme-ButtonFocus" transform="scale(1,-1)" x="5" y="-29" width="26" height="1"/>
+ <g id="north-focus-top">
+  <rect x="260" y="44" width="72" height="4" fill="none"/>
+  <rect x="282" y="44" width="28" height="4" rx="2" fill="#94e2d5"/>
  </g>
  <g id="north-focus-topleft" transform="matrix(-1,0,0,-1,72,43)" opacity="0">
   <rect transform="scale(1,-1)" x="34" y="-21" width="1" height="3" fill="none"/>
@@ -222,9 +219,9 @@
   <rect transform="scale(1,-1)" x="34" y="-21" width="1" height="3" fill="none"/>
   <rect class="ColorScheme-ButtonHover" x="31" y="18" width="3" height="3" fill="currentColor" opacity=".99"/>
  </g>
- <g id="north-hover-top" transform="matrix(-1,0,0,-1,72,93)" fill="#94e2d5" opacity=".5">
-  <rect class="ColorScheme-ButtonHover" transform="scale(1,-1)" x="5" y="-28" width="26" height="2" opacity="1"/>
-  <rect class="ColorScheme-ButtonHover" transform="scale(1,-1)" x="5" y="-29" width="26" height="1" opacity="1"/>
+ <g id="north-hover-top" opacity="0.5">
+  <rect x="260" y="76" width="72" height="4" fill="none"/>
+  <rect x="282" y="76" width="28" height="4" rx="2" fill="#94e2d5"/>
  </g>
  <g id="north-hover-topleft" transform="matrix(-1,0,0,-1,72,85)" opacity="0">
   <rect transform="scale(1,-1)" x="34" y="-21" width="1" height="3" fill="none"/>
@@ -261,9 +258,9 @@
   <rect transform="scale(1,-1)" x="34" y="-21" width="1" height="3" fill="none"/>
   <rect class="ColorScheme-NeutralText" x="31" y="18" width="3" height="3" fill="currentColor" opacity=".66"/>
  </g>
- <g id="north-attention-top" transform="matrix(-1,0,0,-1,72,114)" fill="#ffb54d">
-  <rect class="ColorScheme-NeutralText" transform="scale(1,-1)" x="5" y="-28" width="26" height="2"/>
-  <rect class="ColorScheme-NeutralText" transform="scale(1,-1)" x="5" y="-29" width="26" height="1"/>
+ <g id="north-attention-top">
+  <rect x="260" y="108" width="72" height="4" fill="none"/>
+  <rect x="282" y="108" width="28" height="4" rx="2" fill="#ffb54d"/>
  </g>
  <g id="north-attention-topleft" transform="matrix(-1,0,0,-1,72,106)" opacity="0">
   <rect transform="scale(1,-1)" x="34" y="-21" width="1" height="3" fill="none"/>
@@ -273,9 +270,9 @@
   <rect transform="scale(1,-1)" x="31" y="-22" width="3" height="1" fill="none"/>
   <rect class="ColorScheme-NeutralText" x="31" y="18" width="3" height="3" fill="#ffb54d" opacity="1"/>
  </g>
- <g id="west-focus-left" transform="matrix(-1 0 0 .84615 107 15.846)" fill="#94e2d5">
-  <rect class="ColorScheme-ButtonFocus" x="31" y="12" width="2" height="13"/>
-  <rect class="ColorScheme-ButtonFocus" x="33" y="12" width="1" height="13"/>
+ <g id="west-focus-left">
+  <rect x="388" y="4" width="4" height="72" fill="none"/>
+  <rect x="388" y="26" width="4" height="28" rx="2" fill="#94e2d5"/>
  </g>
  <g id="west-focus-right" transform="matrix(1 0 0 -.84615 73 47.154)">
   <rect class="ColorScheme-ButtonFocus" x="31" y="12" width="2" height="13" opacity="0"/>
@@ -312,9 +309,9 @@
   <rect class="ColorScheme-ButtonFocus" x="31" y="18" width="2" height="2" fill="#94e2d5" opacity="1"/>
   <path class="ColorScheme-ButtonFocus" d="m34 18v2 1h-3v-1h2v-2z" fill="#94e2d5" opacity="1"/>
  </g>
- <g id="west-hover-left" transform="matrix(-1 0 0 .84615 107 57.846)" fill="#94e2d5" opacity=".5">
-  <rect class="ColorScheme-ButtonHover" x="31" y="12" width="2" height="13" opacity="1"/>
-  <rect class="ColorScheme-ButtonHover" x="33" y="12" width="1" height="13" opacity="1"/>
+ <g id="west-hover-left" opacity="0.5">
+  <rect x="420" y="4" width="4" height="72" fill="none"/>
+  <rect x="420" y="26" width="4" height="28" rx="2" fill="#94e2d5"/>
  </g>
  <g id="west-hover-right" transform="matrix(1 0 0 -.84615 73 89.154)" fill="currentColor" opacity="0">
   <rect class="ColorScheme-ButtonHover" x="31" y="12" width="2" height="13" opacity=".99"/>
@@ -351,9 +348,9 @@
   <rect class="ColorScheme-ButtonHover" x="31" y="18" width="2" height="2" fill="#94e2d5" opacity="1"/>
   <path class="ColorScheme-ButtonHover" d="m34 18v2 1h-3v-1h2v-2z" fill="#94e2d5" opacity="1"/>
  </g>
- <g id="west-attention-left" transform="matrix(-1 0 0 .84615 107 78.846)" fill="#ffb54d">
-  <rect class="ColorScheme-NeutralText" x="31" y="12" width="2" height="13"/>
-  <rect class="ColorScheme-NeutralText" x="33" y="12" width="1" height="13"/>
+ <g id="west-attention-left">
+  <rect x="452" y="4" width="4" height="72" fill="none"/>
+  <rect x="452" y="26" width="4" height="28" rx="2" fill="#ffb54d"/>
  </g>
  <g id="west-attention-right" transform="matrix(1 0 0 -.84615 73 110.15)" fill="currentColor" opacity="0">
   <rect class="ColorScheme-NeutralText" x="31" y="12" width="2" height="13" opacity=".66"/>
@@ -388,9 +385,9 @@
   <rect transform="scale(1,-1)" x="34" y="-21" width="1" height="3" fill="none"/>
   <rect class="ColorScheme-NeutralText" x="31" y="18" width="3" height="3" fill="#ffb54d" opacity="1"/>
  </g>
- <g id="east-focus-right" transform="matrix(1 0 0 .84615 109 15.846)" fill="#94e2d5">
-  <rect class="ColorScheme-ButtonFocus" x="31" y="12" width="2" height="13"/>
-  <rect class="ColorScheme-ButtonFocus" x="33" y="12" width="1" height="13"/>
+ <g id="east-focus-right">
+  <rect x="396" y="4" width="4" height="72" fill="none"/>
+  <rect x="396" y="26" width="4" height="28" rx="2" fill="#94e2d5"/>
  </g>
  <g id="east-focus-left" transform="matrix(-1 0 0 -.84615 143 47.154)">
   <rect class="ColorScheme-ButtonFocus" x="31" y="12" width="2" height="13" opacity="0"/>
@@ -427,9 +424,9 @@
   <rect class="ColorScheme-ButtonFocus" x="31" y="18" width="2" height="2" fill="#94e2d5" opacity="1"/>
   <path class="ColorScheme-ButtonFocus" d="m34 18v2 1h-3v-1h2v-2z" fill="#94e2d5" opacity="1"/>
  </g>
- <g id="east-hover-right" transform="matrix(1 0 0 .84615 109 57.846)" fill="#94e2d5" opacity=".5">
-  <rect class="ColorScheme-ButtonHover" x="31" y="12" width="2" height="13" opacity="1"/>
-  <rect class="ColorScheme-ButtonHover" x="33" y="12" width="1" height="13" opacity="1"/>
+ <g id="east-hover-right" opacity="0.5">
+  <rect x="428" y="4" width="4" height="72" fill="none"/>
+  <rect x="428" y="26" width="4" height="28" rx="2" fill="#94e2d5"/>
  </g>
  <g id="east-hover-left" transform="matrix(-1 0 0 -.84615 143 89.154)" fill="currentColor" opacity="0">
   <rect class="ColorScheme-ButtonHover" x="31" y="12" width="2" height="13" opacity=".99"/>
@@ -466,9 +463,9 @@
   <rect class="ColorScheme-ButtonHover" x="31" y="18" width="2" height="2" fill="#94e2d5" opacity="1"/>
   <path class="ColorScheme-ButtonHover" d="m34 18v2 1h-3v-1h2v-2z" fill="#94e2d5" opacity="1"/>
  </g>
- <g id="east-attention-right" transform="matrix(1 0 0 .84615 109 78.846)" fill="#ffb54d">
-  <rect class="ColorScheme-NeutralText" x="31" y="12" width="2" height="13"/>
-  <rect class="ColorScheme-NeutralText" x="33" y="12" width="1" height="13"/>
+ <g id="east-attention-right">
+  <rect x="460" y="4" width="4" height="72" fill="none"/>
+  <rect x="460" y="26" width="4" height="28" rx="2" fill="#ffb54d"/>
  </g>
  <g id="east-attention-left" transform="matrix(-1 0 0 -.84615 143 110.15)" fill="currentColor" opacity="0">
   <rect class="ColorScheme-NeutralText" x="31" y="12" width="2" height="13" opacity=".66"/>
@@ -687,10 +684,9 @@
   <rect transform="scale(1,-1)" x="34" y="-21" width="1" height="3" fill="none"/>
   <rect class="ColorScheme-Text" x="31" y="18" width="3" height="3" fill="currentColor" fill-opacity=".16"/>
  </g>
- <g id="minimized-bottom" transform="matrix(-1,0,0,1,36,96)" fill="#fff" opacity=".15">
-   <rect transform="scale(1,-1)" x="5" y="-29" width="26" height="3" fill="none"/>
-  <rect class="ColorScheme-Text" transform="scale(1,-1)" x="13" y="-28" width="10" height="2" opacity="1"/>
-  <rect class="ColorScheme-Text" transform="scale(1,-1)" x="13" y="-29" width="10" height="1" opacity="1"/>
+ <g id="minimized-bottom" opacity="0.6">
+  <rect x="260" y="132" width="72" height="4" fill="none"/>
+  <rect x="291" y="132" width="10" height="4" rx="2" fill="#fff"/>
  </g>
  <g id="minimized-bottomleft" transform="matrix(-1,0,0,1,36,104)" opacity="0">
   <rect transform="scale(1,-1)" x="34" y="-21" width="1" height="3" fill="none"/>
@@ -727,9 +723,9 @@
   <rect transform="scale(1,-1)" x="34" y="-21" width="1" height="3" fill="none"/>
   <rect class="ColorScheme-Text" x="31" y="18" width="3" height="3" fill="currentColor" fill-opacity=".16"/>
  </g>
- <g id="north-minimized-top" transform="matrix(-1,0,0,-1,72,135)" fill="#fff" opacity=".15">
-  <rect class="ColorScheme-Text" transform="scale(1,-1)" x="5" y="-28" width="26" height="2" opacity="1"/>
-  <rect class="ColorScheme-Text" transform="scale(1,-1)" x="5" y="-29" width="26" height="1" opacity="1"/>
+ <g id="north-minimized-top" opacity="0.6">
+  <rect x="260" y="140" width="72" height="4" fill="none"/>
+  <rect x="291" y="140" width="10" height="4" rx="2" fill="#fff"/>
  </g>
  <g id="north-minimized-topleft" transform="matrix(-1,0,0,-1,72,127)" opacity="0">
   <rect transform="scale(1,-1)" x="34" y="-21" width="1" height="3" fill="none"/>
@@ -741,9 +737,9 @@
   <rect class="ColorScheme-Text" x="31" y="18" width="2" height="2" fill="currentColor" fill-opacity=".16"/>
   <path class="ColorScheme-Text" d="m34 18v2 1h-3v-1h2v-2z" fill="currentColor" fill-opacity=".16"/>
  </g>
- <g id="west-minimized-left" transform="matrix(-1 0 0 .84615 107 99.846)" fill="#fff" opacity=".15">
-  <rect class="ColorScheme-Text" x="31" y="12" width="2" height="13" opacity="1"/>
-  <rect class="ColorScheme-Text" x="33" y="12" width="1" height="13" opacity="1"/>
+ <g id="west-minimized-left" opacity="0.6">
+  <rect x="484" y="4" width="4" height="72" fill="none"/>
+  <rect x="484" y="35" width="4" height="10" rx="2" fill="#fff"/>
  </g>
  <g id="west-minimized-right" transform="matrix(1 0 0 -.84615 73 131.15)" fill="currentColor" fill-opacity=".16" opacity="0">
   <rect class="ColorScheme-Text" x="31" y="12" width="2" height="13"/>
@@ -780,9 +776,9 @@
   <rect class="ColorScheme-Text" x="31" y="18" width="2" height="2" fill="currentColor" fill-opacity=".16"/>
   <path class="ColorScheme-Text" d="m34 18v2 1h-3v-1h2v-2z" fill="currentColor" fill-opacity=".16"/>
  </g>
- <g id="east-minimized-right" transform="matrix(1 0 0 .84615 109 99.846)" fill="#fff" opacity=".15">
-  <rect class="ColorScheme-Text" x="31" y="12" width="2" height="13" opacity="1"/>
-  <rect class="ColorScheme-Text" x="33" y="12" width="1" height="13" opacity="1"/>
+ <g id="east-minimized-right" opacity="0.6">
+  <rect x="492" y="4" width="4" height="72" fill="none"/>
+  <rect x="492" y="35" width="4" height="10" rx="2" fill="#fff"/>
  </g>
  <g id="east-minimized-left" transform="matrix(-1 0 0 -.84615 143 131.15)" fill="currentColor" fill-opacity=".16" opacity="0">
   <rect class="ColorScheme-Text" x="31" y="12" width="2" height="13"/>
@@ -856,9 +852,9 @@
   <rect transform="scale(1,-1)" x="34" y="-21" width="1" height="3" fill="none"/>
   <rect class="ColorScheme-Text" x="31" y="18" width="3" height="3" fill="currentColor" fill-opacity=".16"/>
  </g>
- <g id="normal-bottom" transform="matrix(-1 0 0 1 36 33)" opacity=".35">
-   <rect transform="scale(1,-1)" x="5" y="-29" width="26" height="3" fill="none"/>
-  <rect class="ColorScheme-Text" transform="scale(1,-1)" x="13" y="-29" width="10" height="3" color="#31363b" fill="#fff"/>
+ <g id="normal-bottom" opacity="0.6">
+  <rect x="260" y="4" width="72" height="4" fill="none"/>
+  <rect x="282" y="4" width="28" height="4" rx="2" fill="#fff"/>
  </g>
  <g id="normal-bottomleft" transform="matrix(-1 0 0 1 36 41)" opacity="0">
   <rect transform="scale(1,-1)" x="34" y="-21" width="1" height="3" opacity="0"/>
@@ -891,8 +887,9 @@
   <rect transform="scale(1,-1)" x="34" y="-21" width="1" height="3" fill="none"/>
   <rect class="ColorScheme-Text" x="31" y="18" width="3" height="3" fill="currentColor" fill-opacity=".16"/>
  </g>
- <g id="north-normal-top" transform="matrix(-1,0,0,-1,72,72)" opacity=".35">
-  <rect class="ColorScheme-Text" transform="scale(1,-1)" x="5" y="-29" width="26" height="3" color="#31363b" fill="#fff"/>
+ <g id="north-normal-top" opacity="0.6">
+  <rect x="260" y="12" width="72" height="4" fill="none"/>
+  <rect x="282" y="12" width="28" height="4" rx="2" fill="#fff"/>
  </g>
  <g id="north-normal-topleft" transform="matrix(-1,0,0,-1,72,64)" opacity="0">
   <rect transform="scale(1,-1)" x="34" y="-21" width="1" height="3" opacity="0"/>
@@ -902,8 +899,9 @@
   <rect transform="scale(1,-1)" x="31" y="-22" width="3" height="1" opacity="0"/>
   <rect class="ColorScheme-Text" x="31" y="18" width="3" height="3" color="#31363b" fill-opacity=".39216"/>
  </g>
- <g id="west-normal-left" transform="matrix(-1 0 0 .84615 107 36.846)" opacity=".35">
-  <rect class="ColorScheme-Text" x="31" y="12" width="3" height="13" color="#31363b" fill="#fff"/>
+ <g id="west-normal-left" opacity="0.6">
+  <rect x="356" y="4" width="4" height="72" fill="none"/>
+  <rect x="356" y="26" width="4" height="28" rx="2" fill="#fff"/>
  </g>
  <g id="west-normal-right" transform="matrix(1 0 0 -.84615 73 68.154)" fill="currentColor" fill-opacity=".16" opacity="0">
   <rect class="ColorScheme-Text" x="31" y="12" width="2" height="13"/>
@@ -936,8 +934,9 @@
   <rect transform="scale(1,-1)" x="34" y="-21" width="1" height="3" opacity="0"/>
   <rect class="ColorScheme-Text" x="31" y="18" width="3" height="3" color="#31363b" fill-opacity=".39216"/>
  </g>
- <g id="east-normal-right" transform="matrix(1 0 0 .84615 109 36.846)" opacity=".35">
-  <rect class="ColorScheme-Text" x="31" y="12" width="3" height="13" color="#31363b" fill="#fff"/>
+ <g id="east-normal-right" opacity="0.6">
+  <rect x="364" y="4" width="4" height="72" fill="none"/>
+  <rect x="364" y="26" width="4" height="28" rx="2" fill="#fff"/>
  </g>
  <g id="east-normal-left" transform="matrix(-1 0 0 -.84615 143 68.154)" fill="currentColor" fill-opacity=".16" opacity="0">
   <rect class="ColorScheme-Text" x="31" y="12" width="2" height="13"/>
