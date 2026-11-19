@@ -307,6 +307,8 @@ def gtk3_css(adw):
                     f"margin: 0 {GTK3_BUTTON_MARGIN}px", "color: transparent"))
     for button, color in WINDOW_BUTTONS.items():
         out.append(rule([c.format(f".{button}") for c in contexts], f"background-color: {color}"))
+    # le glyphe à 14 px, comme Klassy (SystemIcon14) : GTK 3 le dessine à 16
+    out.append(rule([c.format("") + " image" for c in contexts], "-gtk-icon-transform: scale(0.875)"))
     out.append(rule([c.format(":hover") for c in contexts], f"color: {BASE}"))
     out.append(rule([c.format(":active") for c in contexts], f"box-shadow: inset 0 0 0 9px {alpha(CRUST, 0.2)}"))
     # fenêtre inactive : adw-gtk3 recolore le texte avec une règle :backdrop, à égaler elle aussi
